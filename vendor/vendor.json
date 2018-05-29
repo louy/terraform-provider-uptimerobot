@@ -1,0 +1,25 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "JHxGzmxcIS8NyLX9pGhK5beIra4=",
+			"path": "github.com/hashicorp/terraform/helper/schema",
+			"revision": "170a1530d1ca815788a57dbe7afae209ce9fd3ac",
+			"revisionTime": "2018-05-24T22:32:19Z"
+		},
+		{
+			"checksumSHA1": "DqaoG++NXRCfvH/OloneLWrM+3k=",
+			"path": "github.com/hashicorp/terraform/plugin",
+			"revision": "170a1530d1ca815788a57dbe7afae209ce9fd3ac",
+			"revisionTime": "2018-05-24T22:32:19Z"
+		},
+		{
+			"checksumSHA1": "lHCKONqlaHsn5cEaYltad7dvRq8=",
+			"path": "github.com/hashicorp/terraform/terraform",
+			"revision": "170a1530d1ca815788a57dbe7afae209ce9fd3ac",
+			"revisionTime": "2018-05-24T22:32:19Z"
+		}
+	],
+	"rootPath": "github.com/louy/terraform-provider-uptime-robot"
+}
