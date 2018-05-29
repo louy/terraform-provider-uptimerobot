@@ -16,6 +16,9 @@ func Provider() *schema.Provider {
 				Required: true,
 			},
 		},
+		DataSourcesMap: map[string]*schema.Resource{
+			"uptimerobot_account": dataSourceAccount(),
+		},
 		ResourcesMap: map[string]*schema.Resource{
 			"uptimerobot_alert_contact": resourceAlertContact(),
 			"uptimerobot_monitor":       resourceMonitor(),
