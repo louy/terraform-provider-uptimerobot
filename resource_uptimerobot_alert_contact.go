@@ -7,6 +7,7 @@ import (
 	"net/url"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 type AlertContactType int
@@ -63,26 +64,13 @@ func resourceAlertContact() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"friendly_name": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
+				Required: true,
 			},
 			"type": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-				ValidateFunc: func(i interface{}, k string) (s []string, es []error) {
-					v, ok := i.(string)
-					if !ok {
-						es = append(es, fmt.Errorf("expected type of %s to be string", k))
-						return
-					}
-
-					if _, ok := alertContactTypes[v]; !ok {
-						es = append(es, fmt.Errorf("unknown type for %s", v))
-						return
-					}
-
-					return
-				},
+				Type:         schema.TypeString,
+				Required:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringInSlice(mapKeys(alertContactTypes), false),
 			},
 			"value": &schema.Schema{
 				Type:     schema.TypeString,

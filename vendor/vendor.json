@@ -519,6 +519,18 @@
 			"revisionTime": "2018-05-24T22:32:19Z"
 		},
 		{
+			"checksumSHA1": "Fzbv+N7hFXOtrR6E7ZcHT3jEE9s=",
+			"path": "github.com/hashicorp/terraform/helper/structure",
+			"revision": "170a1530d1ca815788a57dbe7afae209ce9fd3ac",
+			"revisionTime": "2018-05-24T22:32:19Z"
+		},
+		{
+			"checksumSHA1": "nEC56vB6M60BJtGPe+N9rziHqLg=",
+			"path": "github.com/hashicorp/terraform/helper/validation",
+			"revision": "170a1530d1ca815788a57dbe7afae209ce9fd3ac",
+			"revisionTime": "2018-05-24T22:32:19Z"
+		},
+		{
 			"checksumSHA1": "kD1ayilNruf2cES1LDfNZjYRscQ=",
 			"path": "github.com/hashicorp/terraform/httpclient",
 			"revision": "170a1530d1ca815788a57dbe7afae209ce9fd3ac",
