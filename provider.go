@@ -22,6 +22,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"uptimerobot_alert_contact": resourceAlertContact(),
 			"uptimerobot_monitor":       resourceMonitor(),
+			"uptimerobot_status_page":   resourceStatusPage(),
 		},
 		ConfigureFunc: func(r *schema.ResourceData) (interface{}, error) {
 			config := UptimeRobotConfig{
