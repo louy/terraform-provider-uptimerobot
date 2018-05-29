@@ -56,6 +56,9 @@ func resourceAlertContact() *schema.Resource {
 		Read:   resourceAlertContactRead,
 		Update: resourceAlertContactUpdate,
 		Delete: resourceAlertContactDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"friendly_name": &schema.Schema{
