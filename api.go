@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -14,6 +15,8 @@ func uptimerobotAPICall(
 	endpoint string,
 	params string,
 ) (map[string]interface{}, error) {
+	log.Printf("[DEBUG] Making request to: %#v", endpoint)
+
 	url := "https://api.uptimerobot.com/v2/" + endpoint
 
 	payload := strings.NewReader(
@@ -35,6 +38,9 @@ func uptimerobotAPICall(
 	if err != nil {
 		return nil, err
 	}
+
+	log.Printf("[DEBUG] Got response: %#v", res)
+	log.Printf("[DEBUG] Got body: %#v", string(body))
 
 	fmt.Println(res)
 	fmt.Println(string(body))
