@@ -14,12 +14,12 @@ jobs:
           keys:
             - v1-pkg-cache
 
-      - run: go get -t -d -v ./...
+      - run: dep ensure -vendor-only
 
       - save_cache:
           key: v1-pkg-cache
           paths:
-            - "/go"
+            - "./vendor"
 
       - run:
           name: Build
