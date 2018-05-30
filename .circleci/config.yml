@@ -12,12 +12,12 @@ jobs:
 
       - restore_cache:
           keys:
-            - vendor
+            - "vendor-dep-{{ checksum "Gopkg.lock" }}"
 
       - run: dep ensure -vendor-only
 
       - save_cache:
-          key: vendor
+          key: "vendor-dep-{{ checksum "Gopkg.lock" }}"
           paths:
             - "./vendor"
 
