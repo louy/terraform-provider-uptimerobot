@@ -7,34 +7,28 @@ jobs:
 
     working_directory: /go/src/github.com/louy/terraform-provider-uptimerobot
 
-    environment:
-      TEST_RESULTS: /tmp/test-results
-
     steps:
       - checkout
-      - run: mkdir -p $TEST_RESULTS
 
       - restore_cache:
           keys:
             - v1-pkg-cache
 
-      # Normally, this step would be in a custom primary image;
-      # we've added it here for the sake of explanation.
-      - run: govendor fetch +local
-
-      - run:
-          name: Build
-          command: |
-            go build
-      - run:
-          name: Run tests
-          command: |
-            go test
+      - run: go get -t -d -v ./...
 
       - save_cache:
           key: v1-pkg-cache
           paths:
             - "/go"
+
+      - run:
+          name: Build
+          command: |
+            go build -v
+      - run:
+          name: Run tests
+          command: |
+            go test
 
       - store_artifacts:
           path: "/go/bin/terraform-provider-uptimerobot"
