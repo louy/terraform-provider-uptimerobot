@@ -1,4 +1,4 @@
-package main
+package uptimerobot
 
 import (
 	"encoding/json"
@@ -66,6 +66,13 @@ func resourceStatusPage() *schema.Resource {
 					Type: schema.TypeInt,
 				},
 				PromoteSingle: true,
+			},
+			"dns_address": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+				DefaultFunc: func() (interface{}, error) {
+					return "stats.uptimerobot.com", nil
+				},
 			},
 		},
 	}

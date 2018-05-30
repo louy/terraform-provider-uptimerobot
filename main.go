@@ -1,4 +1,4 @@
-package main
+package uptimerobot
 
 import (
 	"github.com/hashicorp/terraform/plugin"
@@ -8,7 +8,7 @@ import (
 func main() {
 	plugin.Serve(&plugin.ServeOpts{
 		ProviderFunc: func() terraform.ResourceProvider {
-			return Provider()
+			return UptimeRobotProvider()
 		},
 	})
 }

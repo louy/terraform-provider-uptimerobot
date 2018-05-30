@@ -39,7 +39,7 @@ resource "uptimerobot_status_page" "main" {
 resource "aws_route53_record" {
   zone_id = "[MY ZONE ID]"
   type    = "CNAME"
-  records = ["${resource.uptimerobot_status_page.main.id}"]
+  records = ["${resource.uptimerobot_status_page.main.dns_address}"]
 }
 
 ```
