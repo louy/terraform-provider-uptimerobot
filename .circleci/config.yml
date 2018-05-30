@@ -34,8 +34,8 @@ jobs:
       - save_cache:
           key: v1-pkg-cache
           paths:
-            - "$GOPATH"
+            - "/go"
 
       - store_artifacts:
-          path: "$GOPATH/bin/terraform-provider-uptimerobot"
+          path: "/go/bin/terraform-provider-uptimerobot"
           destination: terraform-provider-uptimerobot
