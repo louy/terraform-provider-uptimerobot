@@ -12,12 +12,12 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-pkg-cache
+            - vendor
 
       - run: dep ensure -vendor-only
 
       - save_cache:
-          key: v1-pkg-cache
+          key: vendor
           paths:
             - "./vendor"
 
