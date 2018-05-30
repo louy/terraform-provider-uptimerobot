@@ -1,0 +1,41 @@
+version: 2
+jobs:
+  build:
+    docker:
+      # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
+      - image: circleci/golang:1.10
+
+    working_directory: /go/src/github.com/louy/terraform-provider-uptimerobot
+
+    environment:
+      TEST_RESULTS: /tmp/test-results
+
+    steps:
+      - checkout
+      - run: mkdir -p $TEST_RESULTS
+
+      - restore_cache:
+          keys:
+            - v1-pkg-cache
+
+      # Normally, this step would be in a custom primary image;
+      # we've added it here for the sake of explanation.
+      - run: govendor fetch +local
+
+      - run:
+          name: Build
+          command: |
+            go build
+      - run:
+          name: Run tests
+          command: |
+            go test
+
+      - save_cache:
+          key: v1-pkg-cache
+          paths:
+            - "$GOPATH"
+
+      - store_artifacts:
+          path: "$GOPATH/bin/terraform-provider-uptimerobot"
+          destination: terraform-provider-uptimerobot
