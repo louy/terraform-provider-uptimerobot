@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -51,13 +52,14 @@ func resourceStatusPage() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				ValidateFunc: validation.StringInSlice(mapKeys(statusPageSort), false),
-				Default:      mapKeys(monitorTypes)[0],
+				Default:      "a-z",
 			},
 			"status": &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validation.StringInSlice(mapKeys(statusPageStatus), false),
-				Optional:     true,
-				Default:      "active",
+				Type:     schema.TypeString,
+				Computed: true,
+				// ValidateFunc: validation.StringInSlice(mapKeys(statusPageStatus), false),
+				// Optional:     true,
+				// Default:      "active",
 			},
 			"monitors": &schema.Schema{
 				Type:     schema.TypeList,
@@ -76,14 +78,24 @@ func resourceStatusPageCreate(d *schema.ResourceData, m interface{}) error {
 	data.Add("type", fmt.Sprintf("%d", 1))
 	data.Add("friendly_name", d.Get("friendly_name").(string))
 	data.Add("custom_domain", d.Get("custom_domain").(string))
-	data.Add("password", d.Get("password").(string))
-	if len(d.Get("monitors").([]string)) == 0 {
+	if d.Get("password").(string) != "" {
+		data.Add("password", d.Get("password").(string))
+	}
+	// log.Printf("[DEBUG] [monitors] %+v", d.Get("monitors").([]interface{}))
+	if len(d.Get("monitors").([]interface{})) == 0 {
 		data.Add("monitors", "0")
 	} else {
-		data.Add("monitors", strings.Join(d.Get("monitors").([]string), "-"))
+		// log.Printf("[DEBUG] [monitors type] %s", reflect.TypeOf(d.Get("monitors").([]interface{})[0]))
+		var monitors = d.Get("monitors").([]interface{})
+		var strMonitors = make([]string, len(monitors))
+		for i, v := range monitors {
+			strMonitors[i] = strconv.Itoa(v.(int))
+		}
+		data.Add("monitors", strings.Join(strMonitors, "-"))
 	}
+	// log.Printf("[DEBUG] Sort: %s %d", d.Get("sort").(string), statusPageSort[d.Get("sort").(string)])
 	data.Add("sort", fmt.Sprintf("%d", statusPageSort[d.Get("sort").(string)]))
-	data.Add("status", fmt.Sprintf("%d", statusPageStatus[d.Get("status").(string)]))
+	// data.Add("status", fmt.Sprintf("%d", statusPageStatus[d.Get("status").(string)]))
 
 	body, err := uptimerobotAPICall(
 		m.(UptimeRobotConfig).apiKey,
@@ -96,6 +108,12 @@ func resourceStatusPageCreate(d *schema.ResourceData, m interface{}) error {
 	psp := body["psp"].(map[string]interface{})
 	d.SetId(fmt.Sprintf("%d", int(psp["id"].(float64))))
 	d.Set("status", "active")
+	d.Set("standard_url", psp["standard_url"].(string))
+	if psp["custom_url"] != nil {
+		d.Set("custom_url", psp["custom_url"].(string))
+	} else {
+		d.Set("custom_url", nil)
+	}
 	return nil
 }
 
@@ -122,9 +140,13 @@ func resourceStatusPageRead(d *schema.ResourceData, m interface{}) error {
 
 	d.Set("friendly_name", psp["friendly_name"].(string))
 	d.Set("standard_url", psp["standard_url"].(string))
-	d.Set("custom_url", psp["custom_url"].(string))
-	d.Set("sort", intToString(statusPageSort, psp["sort"].(int)))
-	d.Set("status", intToString(statusPageStatus, psp["status"].(int)))
+	if psp["custom_url"] != nil {
+		d.Set("custom_url", psp["custom_url"].(string))
+	} else {
+		d.Set("custom_url", nil)
+	}
+	d.Set("sort", intToString(statusPageSort, int(psp["sort"].(float64))))
+	d.Set("status", intToString(statusPageStatus, int(psp["status"].(float64))))
 
 	return nil
 }
@@ -135,14 +157,22 @@ func resourceStatusPageUpdate(d *schema.ResourceData, m interface{}) error {
 	data.Add("type", fmt.Sprintf("%d", 1))
 	data.Add("friendly_name", d.Get("friendly_name").(string))
 	data.Add("custom_domain", d.Get("custom_domain").(string))
-	data.Add("password", d.Get("password").(string))
-	if len(d.Get("monitors").([]string)) == 0 {
+	if d.Get("password").(string) != "" {
+		data.Add("password", d.Get("password").(string))
+	}
+	// log.Printf("[DEBUG] [monitors] %+v", d.Get("monitors").([]interface{}))
+	if len(d.Get("monitors").([]interface{})) == 0 {
 		data.Add("monitors", "0")
 	} else {
-		data.Add("monitors", strings.Join(d.Get("monitors").([]string), "-"))
+		var monitors = d.Get("monitors").([]interface{})
+		var strMonitors = make([]string, len(monitors))
+		for i, v := range monitors {
+			strMonitors[i] = strconv.Itoa(v.(int))
+		}
+		data.Add("monitors", strings.Join(strMonitors, "-"))
 	}
 	data.Add("sort", fmt.Sprintf("%d", statusPageSort[d.Get("sort").(string)]))
-	data.Add("status", fmt.Sprintf("%d", statusPageStatus[d.Get("status").(string)]))
+	// data.Add("status", fmt.Sprintf("%d", statusPageStatus[d.Get("status").(string)]))
 
 	_, err := uptimerobotAPICall(
 		m.(UptimeRobotConfig).apiKey,
