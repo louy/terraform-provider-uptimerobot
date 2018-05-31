@@ -72,9 +72,14 @@ func resourceStatusPage() *schema.Resource {
 			"dns_address": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
-				DefaultFunc: func() (interface{}, error) {
-					return "stats.uptimerobot.com", nil
-				},
+			},
+			"standard_url": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"custom_url": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 	}
@@ -121,6 +126,8 @@ func resourceStatusPageCreate(d *schema.ResourceData, m interface{}) error {
 	} else {
 		d.Set("custom_url", nil)
 	}
+
+	d.Set("dns_address", "stats.uptimerobot.com")
 	return nil
 }
 
@@ -154,6 +161,8 @@ func resourceStatusPageRead(d *schema.ResourceData, m interface{}) error {
 	}
 	d.Set("sort", intToString(statusPageSort, int(psp["sort"].(float64))))
 	d.Set("status", intToString(statusPageStatus, int(psp["status"].(float64))))
+
+	d.Set("dns_address", "stats.uptimerobot.com")
 
 	return nil
 }
