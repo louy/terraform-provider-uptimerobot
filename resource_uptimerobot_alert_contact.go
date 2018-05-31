@@ -1,4 +1,4 @@
-package main
+package uptimerobot
 
 import (
 	"encoding/json"
@@ -10,9 +10,7 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 )
 
-type AlertContactType int
-
-var alertContactTypes = map[string]AlertContactType{
+var alertContactTypes = map[string]int{
 	"sms":        1,
 	"email":      2,
 	"twitter-dm": 3,
@@ -25,30 +23,10 @@ var alertContactTypes = map[string]AlertContactType{
 	"slack":      11,
 }
 
-func getContactTypeName(value int) string {
-	for k, v := range alertContactTypes {
-		if int(v) == value {
-			return k
-		}
-	}
-	return ""
-}
-
-type AlertContactStatus int
-
-var alertContactStatuses = map[string]AlertContactStatus{
+var alertContactStatuses = map[string]int{
 	"not activated": 0,
 	"paused":        1,
 	"active":        2,
-}
-
-func getContactStatusName(value int) string {
-	for k, v := range alertContactStatuses {
-		if int(v) == value {
-			return k
-		}
-	}
-	return ""
 }
 
 func resourceAlertContact() *schema.Resource {
@@ -101,7 +79,7 @@ func resourceAlertContactCreate(d *schema.ResourceData, m interface{}) error {
 	}
 	alertcontact := body["alertcontact"].(map[string]interface{})
 	d.SetId(fmt.Sprintf("%d", int(alertcontact["id"].(float64))))
-	d.Set("status", getContactStatusName(0))
+	d.Set("status", intToString(alertContactStatuses, 0))
 	return nil
 }
 
@@ -128,8 +106,8 @@ func resourceAlertContactRead(d *schema.ResourceData, m interface{}) error {
 
 	d.Set("friendly_name", alertcontact["friendly_name"].(string))
 	d.Set("value", alertcontact["value"].(string))
-	d.Set("type", getContactTypeName(int(alertcontact["type"].(float64))))
-	d.Set("status", getContactStatusName(int(alertcontact["status"].(float64))))
+	d.Set("type", intToString(alertContactTypes, int(alertcontact["type"].(float64))))
+	d.Set("status", intToString(alertContactStatuses, int(alertcontact["status"].(float64))))
 
 	return nil
 }

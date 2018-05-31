@@ -1,5 +1,4 @@
-/vendor/*/
-!/vendor/vendor.json
+/vendor
 
 /terraform-provider-uptimerobot
 /.terraform

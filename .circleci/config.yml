@@ -1,0 +1,35 @@
+version: 2
+jobs:
+  build:
+    docker:
+      # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
+      - image: circleci/golang:1.10
+
+    working_directory: /go/src/github.com/louy/terraform-provider-uptimerobot
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - vendor-dep-{{ checksum "Gopkg.lock" }}
+
+      - run: dep ensure -vendor-only
+
+      - save_cache:
+          key: vendor-dep-{{ checksum "Gopkg.lock" }}
+          paths:
+            - ./vendor
+
+      - run:
+          name: Build
+          command: |
+            go build -v
+      - run:
+          name: Run tests
+          command: |
+            go test
+
+      - store_artifacts:
+          path: "/go/bin/terraform-provider-uptimerobot"
+          destination: terraform-provider-uptimerobot
