@@ -8,7 +8,7 @@ import (
 func main() {
 	plugin.Serve(&plugin.ServeOpts{
 		ProviderFunc: func() terraform.ResourceProvider {
-			return UptimeRobotProvider()
+			return Provider()
 		},
 	})
 }

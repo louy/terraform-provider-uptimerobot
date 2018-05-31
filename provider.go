@@ -1,23 +1,25 @@
 package uptimerobot
 
-import (
-	"github.com/hashicorp/terraform/helper/schema"
-)
-
-type UptimeRobotConfig struct {
-	apiKey string
-}
-
 /*
-	UptimeRobotProvider integrates terraform with uptimerobot.com
-
+	Usage:
 	```
 	provider "uptimerobot" {
 	  api_key = "[YOUR MAIN API KEY]"
 	}
 	```
 */
-func UptimeRobotProvider() *schema.Provider {
+
+import (
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/terraform"
+)
+
+type UptimeRobotConfig struct {
+	apiKey string
+}
+
+// Provider returns a terraform.ResourceProvider.
+func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"api_key": &schema.Schema{
