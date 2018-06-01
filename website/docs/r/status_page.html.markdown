@@ -1,7 +1,7 @@
 ---
 layout: "uptimerobot"
 page_title: "UptimeRobot: uptimerobot_status_page"
-sidebar_current: "docs-uptimerobot-resource-status_page"
+sidebar_current: "docs-uptimerobot-resource-status-page"
 description: |-
   Set up a status page
 ---

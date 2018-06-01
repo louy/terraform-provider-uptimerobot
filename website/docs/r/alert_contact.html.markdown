@@ -1,7 +1,7 @@
 ---
 layout: "uptimerobot"
 page_title: "UptimeRobot: uptimerobot_alert_contact"
-sidebar_current: "docs-uptimerobot-resource-alert_contact"
+sidebar_current: "docs-uptimerobot-resource-alert-contact"
 description: |-
   Set up an alert contact
 ---
