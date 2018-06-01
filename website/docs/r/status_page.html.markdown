@@ -23,6 +23,11 @@ resource "uptimerobot_status_page" "my_status_page" {
 }
 ```
 
-## Attributes Reference
+## Arguments Reference
 
 TODO
+
+## Attributes Reference
+
+* `id` - the ID of the status page
+* `status` - the status of the status page (`paused` or `active`)

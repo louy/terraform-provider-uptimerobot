@@ -20,6 +20,13 @@ resource "uptimerobot_monitor" "my_website" {
 }
 ```
 
+## Arguments Reference
+
+TODO
+
 ## Attributes Reference
+
+* `id` - the ID of the monitor (can be used for monitor-specific requests)
+* `status` - the status of the monitor (`paused`, `not checked yet`, `up`, `seems down`, or `down`)
 
 TODO
