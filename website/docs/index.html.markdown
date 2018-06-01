@@ -1,5 +1,5 @@
 ---
-layout: "aws"
+layout: "uptimerobot"
 page_title: "Provider: UptimeRobot"
 sidebar_current: "docs-uptimerobot-index"
 description: |-

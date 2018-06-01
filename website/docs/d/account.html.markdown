@@ -1,5 +1,5 @@
 ---
-layout: "aws"
+layout: "uptimerobot"
 page_title: "UptimeRobot: uptimerobot_account"
 sidebar_current: "docs-uptimerobot-datasource-account"
 description: |-
