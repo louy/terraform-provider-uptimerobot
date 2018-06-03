@@ -14,12 +14,12 @@ Use this resource to create a status page
 
 ```hcl
 resource "uptimerobot_status_page" "my_status_page" {
-  friendly_name = "My Status Page"
-  custom_domain = "status.example.com"
-  password      = "WeAreAwsome"
-  sort_monitors = "down-up-paused"
-  monitors      = ["${resource.uptimerobot_monitor.main.id}"]
-  hide_logo     = false # pro only
+  friendly_name  = "My Status Page"
+  custom_domain  = "status.example.com"
+  password       = "WeAreAwsome"
+  sort_monitors  = "down-up-paused"
+  monitors       = ["${resource.uptimerobot_monitor.main.id}"]
+  hide_url_links = true # pro only
 }
 ```
 
