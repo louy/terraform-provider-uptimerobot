@@ -1,4 +1,4 @@
-package uptimerobot
+package uptimerobotapi
 
 import (
 	"encoding/json"
@@ -10,8 +10,15 @@ import (
 	"strings"
 )
 
-func uptimerobotAPICall(
-	apiKey string,
+func New(apiKey string) UptimeRobotApiClient {
+	return UptimeRobotApiClient{apiKey}
+}
+
+type UptimeRobotApiClient struct {
+	apiKey string
+}
+
+func (client UptimeRobotApiClient) MakeCall(
 	endpoint string,
 	params string,
 ) (map[string]interface{}, error) {
@@ -20,7 +27,7 @@ func uptimerobotAPICall(
 	url := "https://api.uptimerobot.com/v2/" + endpoint
 
 	payload := strings.NewReader(
-		fmt.Sprintf("api_key=%s&format=json&%s", apiKey, params),
+		fmt.Sprintf("api_key=%s&format=json&%s", client.apiKey, params),
 	)
 
 	req, _ := http.NewRequest("POST", url, payload)
@@ -41,9 +48,6 @@ func uptimerobotAPICall(
 
 	log.Printf("[DEBUG] Got response: %#v", res)
 	log.Printf("[DEBUG] Got body: %#v", string(body))
-
-	fmt.Println(res)
-	fmt.Println(string(body))
 
 	var result map[string]interface{}
 	json.Unmarshal([]byte(body), &result)

@@ -9,6 +9,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 var monitorTypes = map[string]int{
@@ -164,8 +165,7 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 	})
 	data.Add("alert_contacts", strings.Join(acs, "-"))
 
-	body, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
+	body, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
 		"newMonitor",
 		data.Encode(),
 	)
@@ -182,8 +182,7 @@ func resourceMonitorRead(d *schema.ResourceData, m interface{}) error {
 	data := url.Values{}
 	data.Add("monitors", d.Id())
 
-	body, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
+	body, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
 		"getMonitors",
 		data.Encode(),
 	)
@@ -238,8 +237,7 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 	})
 	data.Add("alert_contacts", strings.Join(acs, "-"))
 
-	_, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
+	_, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
 		"editMonitor",
 		data.Encode(),
 	)
@@ -253,8 +251,7 @@ func resourceMonitorDelete(d *schema.ResourceData, m interface{}) error {
 	data := url.Values{}
 	data.Add("id", d.Id())
 
-	_, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
+	_, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
 		"deleteMonitor",
 		data.Encode(),
 	)

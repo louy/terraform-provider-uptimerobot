@@ -10,6 +10,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 var statusPageStatus = map[string]int{
@@ -108,8 +109,7 @@ func resourceStatusPageCreate(d *schema.ResourceData, m interface{}) error {
 	data.Add("sort", fmt.Sprintf("%d", statusPageSort[d.Get("sort").(string)]))
 	data.Add("status", fmt.Sprintf("%d", statusPageStatus[d.Get("status").(string)]))
 
-	body, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
+	body, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
 		"newPSP",
 		data.Encode(),
 	)
@@ -133,8 +133,7 @@ func resourceStatusPageRead(d *schema.ResourceData, m interface{}) error {
 	data := url.Values{}
 	data.Add("psps", d.Id())
 
-	body, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
+	body, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
 		"getPSPs",
 		data.Encode(),
 	)
@@ -188,8 +187,7 @@ func resourceStatusPageUpdate(d *schema.ResourceData, m interface{}) error {
 	data.Add("sort", fmt.Sprintf("%d", statusPageSort[d.Get("sort").(string)]))
 	data.Add("status", fmt.Sprintf("%d", statusPageStatus[d.Get("status").(string)]))
 
-	_, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
+	_, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
 		"editPSP",
 		data.Encode(),
 	)
@@ -204,8 +202,7 @@ func resourceStatusPageDelete(d *schema.ResourceData, m interface{}) error {
 	data := url.Values{}
 	data.Add("id", d.Id())
 
-	_, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
+	_, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
 		"deletePSP",
 		data.Encode(),
 	)
