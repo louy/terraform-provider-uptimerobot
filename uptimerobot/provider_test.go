@@ -1,9 +1,11 @@
 package uptimerobot
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -31,9 +33,20 @@ func testAccPreCheck(t *testing.T) {
 	if v := os.Getenv("UPTIMEROBOT_API_KEY"); v == "" {
 		t.Fatal("UPTIMEROBOT_API_KEY must be set for acceptance tests")
 	}
+}
 
-	err := testAccProvider.Configure(terraform.NewResourceConfig(nil))
-	if err != nil {
-		t.Fatal(err)
+func testCheckStateValue(id, name string, runAssertions func(value string) error) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[id]
+		if !ok {
+			return fmt.Errorf("Not found: %s", id)
+		}
+		if rs.Primary.ID == "" {
+			return fmt.Errorf("No ID is set")
+		}
+
+		v := rs.Primary.Attributes[name]
+
+		return runAssertions(v)
 	}
 }

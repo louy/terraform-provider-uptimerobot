@@ -23,8 +23,9 @@ func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"api_key": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc("UPTIMEROBOT_API_KEY", nil),
 			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
