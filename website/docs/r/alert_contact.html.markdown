@@ -13,10 +13,10 @@ Use this resource to create an alert contact
 ## Example Usage
 
 ```hcl
-- resource `uptimerobot_alert_contact` `slack` {
-- friendly_name = `Slack Alert`
-- type          = `slack`
-- webhook_url   = `https://hooks.slack.com/services/XXXXXXX`
+resource `uptimerobot_alert_contact` `slack` {
+  friendly_name = `Slack Alert`
+  type          = `slack`
+  webhook_url   = `https://hooks.slack.com/services/XXXXXXX`
 }
 ```
 

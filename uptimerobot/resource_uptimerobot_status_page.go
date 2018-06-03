@@ -55,11 +55,10 @@ func resourceStatusPage() *schema.Resource {
 				Default:      "a-z",
 			},
 			"status": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-				// ValidateFunc: validation.StringInSlice(mapKeys(statusPageStatus), false),
-				// Optional:     true,
-				// Default:      "active",
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice(mapKeys(statusPageStatus), false),
+				Default:      "active",
 			},
 			"monitors": &schema.Schema{
 				Type:     schema.TypeList,
@@ -107,7 +106,7 @@ func resourceStatusPageCreate(d *schema.ResourceData, m interface{}) error {
 	}
 	// log.Printf("[DEBUG] Sort: %s %d", d.Get("sort").(string), statusPageSort[d.Get("sort").(string)])
 	data.Add("sort", fmt.Sprintf("%d", statusPageSort[d.Get("sort").(string)]))
-	// data.Add("status", fmt.Sprintf("%d", statusPageStatus[d.Get("status").(string)]))
+	data.Add("status", fmt.Sprintf("%d", statusPageStatus[d.Get("status").(string)]))
 
 	body, err := uptimerobotAPICall(
 		m.(UptimeRobotConfig).apiKey,
@@ -119,7 +118,6 @@ func resourceStatusPageCreate(d *schema.ResourceData, m interface{}) error {
 	}
 	psp := body["psp"].(map[string]interface{})
 	d.SetId(fmt.Sprintf("%d", int(psp["id"].(float64))))
-	d.Set("status", "active")
 	d.Set("standard_url", psp["standard_url"].(string))
 	if psp["custom_url"] != nil {
 		d.Set("custom_url", psp["custom_url"].(string))
@@ -188,7 +186,7 @@ func resourceStatusPageUpdate(d *schema.ResourceData, m interface{}) error {
 		data.Add("monitors", strings.Join(strMonitors, "-"))
 	}
 	data.Add("sort", fmt.Sprintf("%d", statusPageSort[d.Get("sort").(string)]))
-	// data.Add("status", fmt.Sprintf("%d", statusPageStatus[d.Get("status").(string)]))
+	data.Add("status", fmt.Sprintf("%d", statusPageStatus[d.Get("status").(string)]))
 
 	_, err := uptimerobotAPICall(
 		m.(UptimeRobotConfig).apiKey,

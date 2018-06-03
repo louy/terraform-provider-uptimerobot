@@ -25,9 +25,21 @@ resource "uptimerobot_status_page" "my_status_page" {
 
 ## Arguments Reference
 
-TODO
+* `friendly_name` - friendly name of the monitor (for making it easier to distinguish from others).
+* `monitors` - The monitors to be displayed. Use `[0]` for all monitors (default).
+* `custom_domain` - (optional) the domain or subdomain that the status page will run on.
+* `password` - (optional) the password for the status page.
+* `sort` - (optional) the sorting of the status page. Can be one of the following:
+  - `a-z`
+  - `z-a`
+  - `up-down-paused`
+  - `down-up-paused`
+* `status` - the status of the status page (`paused` or `active`). Defaults to `active`
+<!-- * `hide_url_links` - (optional) for hiding the Uptime Robot links and only available in the Pro Plan -->
 
 ## Attributes Reference
 
 * `id` - the ID of the status page
-* `status` - the status of the status page (`paused` or `active`)
+* `dns_address` - the dns address that you need to point your custom domain to (`stats.uptimerobot.com`)
+* `standard_url` - the full url of the page on uptimerobot.com
+* `custom_url` - the full url of the page (only if `custom_domain` is set)
