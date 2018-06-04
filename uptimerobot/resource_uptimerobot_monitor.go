@@ -1,46 +1,13 @@
 package uptimerobot
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
-	"net/url"
-	"strings"
+	"strconv"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
-
-var monitorTypes = map[string]int{
-	"http":    1,
-	"keyword": 2,
-	"ping":    3,
-	"port":    4,
-}
-
-var monitorSubTypes = map[string]int{
-	"http":   1,
-	"https":  2,
-	"ftp":    3,
-	"smtp":   4,
-	"pop3":   5,
-	"imap":   6,
-	"custom": 99,
-}
-
-var monitorStatuses = map[string]int{
-	"paused":          0,
-	"not checked yet": 1,
-	"up":              2,
-	"seems down":      8,
-	"down":            9,
-}
-
-var monitorKeywordTypes = map[string]int{
-	"exists":     1,
-	"not exists": 2,
-}
 
 func resourceMonitor() *schema.Resource {
 	return &schema.Resource{
@@ -66,12 +33,12 @@ func resourceMonitor() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice(mapKeys(monitorTypes), false),
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.MonitorType, false),
 			},
 			"sub_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice(mapKeys(monitorSubTypes), false),
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.MonitorSubType, false),
 				// required for port monitoring
 			},
 			"port": {
@@ -82,7 +49,7 @@ func resourceMonitor() *schema.Resource {
 			"keyword_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice(mapKeys(monitorKeywordTypes), false),
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.MonitorKeywordType, false),
 				// required for keyword monitoring
 			},
 			"keyword_value": {
@@ -137,126 +104,127 @@ func resourceMonitor() *schema.Resource {
 }
 
 func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("friendly_name", d.Get("friendly_name").(string))
-	data.Add("url", d.Get("url").(string))
-	t := d.Get("type").(string)
-	data.Add("type", fmt.Sprintf("%d", monitorTypes[t]))
-	switch t {
+	req := uptimerobotapi.MonitorCreateRequest{
+		FriendlyName: d.Get("friendly_name").(string),
+		URL:          d.Get("url").(string),
+		Type:         d.Get("type").(string),
+	}
+
+	switch req.Type {
 	case "port":
-		data.Add("sub_type", fmt.Sprintf("%d", monitorSubTypes[d.Get("sub_type").(string)]))
-		data.Add("port", fmt.Sprintf("%d", d.Get("port").(int)))
+		req.SubType = d.Get("sub_type").(string)
+		req.Port = d.Get("port").(int)
 		break
 	case "keyword":
-		data.Add("keyword_type", fmt.Sprintf("%d", monitorKeywordTypes[d.Get("keyword_type").(string)]))
-		data.Add("keyword_value", d.Get("keyword_value").(string))
+		req.KeywordType = d.Get("keyword_type").(string)
+		req.KeywordValue = d.Get("keyword_value").(string)
 
-		data.Add("http_username", d.Get("http_username").(string))
-		data.Add("http_password", d.Get("http_password").(string))
+		req.HTTPUsername = d.Get("http_username").(string)
+		req.HTTPPassword = d.Get("http_password").(string)
 		break
 	case "http":
-		data.Add("http_username", d.Get("http_username").(string))
-		data.Add("http_password", d.Get("http_password").(string))
+		req.HTTPUsername = d.Get("http_username").(string)
+		req.HTTPPassword = d.Get("http_password").(string)
 		break
 	}
-	acs := Map(d.Get("alert_contact").([]interface{}), func(ac interface{}) string {
-		a := ac.(map[string]interface{})
-		return fmt.Sprintf("%d", a["id"].(int))
-	})
-	data.Add("alert_contacts", strings.Join(acs, "-"))
+	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, len(d.Get("alert_contact").([]interface{})))
+	for k, v := range d.Get("alert_contact").([]interface{}) {
+		req.AlertContacts[k] = uptimerobotapi.MonitorRequestAlertContact{
+			ID: v.(map[string]interface{})["id"].(int),
+		}
+	}
 
-	body, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
-		"newMonitor",
-		data.Encode(),
-	)
+	monitor, err := m.(uptimerobotapi.UptimeRobotApiClient).CreateMonitor(req)
 	if err != nil {
 		return err
 	}
-	monitor := body["monitor"].(map[string]interface{})
-	d.SetId(fmt.Sprintf("%d", int(monitor["id"].(float64))))
-	d.Set("status", intToString(monitorStatuses, int(monitor["status"].(float64))))
+	d.SetId(fmt.Sprintf("%d", monitor.ID))
+	updateMonitorResource(d, monitor)
 	return nil
 }
 
 func resourceMonitorRead(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("monitors", d.Id())
-
-	body, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
-		"getMonitors",
-		data.Encode(),
-	)
+	id, err := strconv.Atoi(d.Id())
 	if err != nil {
 		return err
 	}
 
-	monitors, ok := body["monitors"].([]interface{})
-	if !ok {
-		j, _ := json.Marshal(body)
-		return errors.New("Unknown response from the server: " + string(j))
+	monitor, err := m.(uptimerobotapi.UptimeRobotApiClient).GetMonitor(id)
+	if err != nil {
+		return err
 	}
 
-	monitor := monitors[0].(map[string]interface{})
-
-	d.Set("friendly_name", monitor["friendly_name"].(string))
-	d.Set("url", monitor["url"].(string))
-	t := intToString(monitorTypes, int(monitor["type"].(float64)))
-	d.Set("type", t)
-	d.Set("status", intToString(monitorStatuses, int(monitor["status"].(float64))))
-	d.Set("interval", int(monitor["interval"].(float64)))
-
-	switch t {
-	case "port":
-		d.Set("sub_type", monitor["sub_type"].(string))
-		d.Set("port", int(monitor["port"].(float64)))
-		break
-	case "keyword":
-		d.Set("keyword_type", intToString(monitorKeywordTypes, int(monitor["keyword_type"].(float64))))
-		d.Set("keyword_value", monitor["keyword_value"].(string))
-
-		d.Set("http_username", monitor["http_username"].(string))
-		d.Set("http_password", monitor["http_password"].(string))
-		break
-	case "http":
-		d.Set("http_username", monitor["http_username"].(string))
-		d.Set("http_password", monitor["http_password"].(string))
-		break
-	}
+	updateMonitorResource(d, monitor)
 
 	return nil
 }
 
 func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("id", d.Id())
-	data.Add("friendly_name", d.Get("friendly_name").(string))
-	data.Add("url", d.Get("url").(string))
-	acs := Map(d.Get("alert_contact").([]interface{}), func(ac interface{}) string {
-		a := ac.(map[string]interface{})
-		return fmt.Sprintf("%d", a["id"].(int))
-	})
-	data.Add("alert_contacts", strings.Join(acs, "-"))
+	req := uptimerobotapi.MonitorUpdateRequest{
+		FriendlyName: d.Get("friendly_name").(string),
+		URL:          d.Get("url").(string),
+		Type:         d.Get("type").(string),
+	}
 
-	_, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
-		"editMonitor",
-		data.Encode(),
-	)
+	switch req.Type {
+	case "port":
+		req.SubType = d.Get("sub_type").(string)
+		req.Port = d.Get("port").(int)
+		break
+	case "keyword":
+		req.KeywordType = d.Get("keyword_type").(string)
+		req.KeywordValue = d.Get("keyword_value").(string)
+
+		req.HTTPUsername = d.Get("http_username").(string)
+		req.HTTPPassword = d.Get("http_password").(string)
+		break
+	case "http":
+		req.HTTPUsername = d.Get("http_username").(string)
+		req.HTTPPassword = d.Get("http_password").(string)
+		break
+	}
+	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, len(d.Get("alert_contact").([]interface{})))
+	for k, v := range d.Get("alert_contact").([]interface{}) {
+		req.AlertContacts[k] = uptimerobotapi.MonitorRequestAlertContact{
+			ID: v.(map[string]interface{})["id"].(int),
+		}
+	}
+
+	monitor, err := m.(uptimerobotapi.UptimeRobotApiClient).UpdateMonitor(req)
+	if err != nil {
+		return err
+	}
+
+	updateMonitorResource(d, monitor)
+	return nil
+}
+
+func resourceMonitorDelete(d *schema.ResourceData, m interface{}) error {
+	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return err
+	}
+
+	err = m.(uptimerobotapi.UptimeRobotApiClient).DeleteMonitor(id)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func resourceMonitorDelete(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("id", d.Id())
+func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) {
+	d.Set("friendly_name", m.FriendlyName)
+	d.Set("url", m.URL)
+	d.Set("type", m.Type)
+	d.Set("status", m.Status)
+	d.Set("interval", m.Interval)
 
-	_, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
-		"deleteMonitor",
-		data.Encode(),
-	)
-	if err != nil {
-		return err
-	}
-	return nil
+	d.Set("sub_type", m.SubType)
+	d.Set("port", m.Port)
+
+	d.Set("keyword_type", m.KeywordType)
+	d.Set("keyword_value", m.KeywordValue)
+
+	d.Set("http_username", m.HTTPUsername)
+	d.Set("http_password", m.HTTPPassword)
 }
