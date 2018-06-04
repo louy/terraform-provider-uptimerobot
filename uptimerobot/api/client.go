@@ -49,6 +49,9 @@ func (client UptimeRobotApiClient) MakeCall(
 	log.Printf("[DEBUG] Got response: %#v", res)
 	log.Printf("[DEBUG] Got body: %#v", string(body))
 
+	fmt.Printf("Got response: %#v\n", res)
+	fmt.Printf("Got body: %#v\n", string(body))
+
 	var result map[string]interface{}
 	json.Unmarshal([]byte(body), &result)
 

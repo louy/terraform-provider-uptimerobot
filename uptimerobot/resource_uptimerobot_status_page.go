@@ -1,8 +1,6 @@
 package uptimerobot
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -130,36 +128,23 @@ func resourceStatusPageCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceStatusPageRead(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("psps", d.Id())
-
-	body, err := m.(uptimerobotapi.UptimeRobotApiClient).MakeCall(
-		"getPSPs",
-		data.Encode(),
-	)
+	id, err := strconv.Atoi(d.Id())
 	if err != nil {
 		return err
 	}
 
-	psps, ok := body["psps"].([]interface{})
-	if !ok {
-		j, _ := json.Marshal(body)
-		return errors.New("Unknown response from the server: " + string(j))
+	sp, err := m.(uptimerobotapi.UptimeRobotApiClient).GetStatusPage(id)
+	if err != nil {
+		return err
 	}
 
-	psp := psps[0].(map[string]interface{})
+	d.Set("friendly_name", sp.FriendlyName)
+	d.Set("standard_url", sp.StandardURL)
+	d.Set("custom_url", sp.CustomURL)
+	d.Set("sort", sp.Sort)
+	d.Set("status", sp.Status)
 
-	d.Set("friendly_name", psp["friendly_name"].(string))
-	d.Set("standard_url", psp["standard_url"].(string))
-	if psp["custom_url"] != nil {
-		d.Set("custom_url", psp["custom_url"].(string))
-	} else {
-		d.Set("custom_url", nil)
-	}
-	d.Set("sort", intToString(statusPageSort, int(psp["sort"].(float64))))
-	d.Set("status", intToString(statusPageStatus, int(psp["status"].(float64))))
-
-	d.Set("dns_address", "stats.uptimerobot.com")
+	d.Set("dns_address", sp.DNSAddress)
 
 	return nil
 }

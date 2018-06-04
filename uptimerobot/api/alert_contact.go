@@ -7,7 +7,7 @@ import (
 	"net/url"
 )
 
-var alertContactTypes = map[string]int{
+var alertContactType = map[string]int{
 	"sms":        1,
 	"email":      2,
 	"twitter-dm": 3,
@@ -19,15 +19,15 @@ var alertContactTypes = map[string]int{
 	"hipchat":    10,
 	"slack":      11,
 }
-var AlertContactTypes = mapKeys(alertContactTypes)
+var AlertContactType = mapKeys(alertContactType)
 
-var alertContactStatuses = map[string]int{
+var alertContactStatus = map[string]int{
 	"not activated": 0,
 	"paused":        1,
 	"active":        2,
 }
 
-var AlertContactStatuses = mapKeys(alertContactStatuses)
+var AlertContactStatus = mapKeys(alertContactStatus)
 
 type AlertContact struct {
 	ID           int    `json:"id"`
@@ -61,8 +61,8 @@ func (client UptimeRobotApiClient) GetAlertContact(id int) (ac AlertContact, err
 
 	ac.FriendlyName = alertcontact["friendly_name"].(string)
 	ac.Value = alertcontact["value"].(string)
-	ac.Type = intToString(alertContactTypes, int(alertcontact["type"].(float64)))
-	ac.Status = intToString(alertContactStatuses, int(alertcontact["status"].(float64)))
+	ac.Type = intToString(alertContactType, int(alertcontact["type"].(float64)))
+	ac.Status = intToString(alertContactStatus, int(alertcontact["status"].(float64)))
 
 	return
 }
@@ -76,33 +76,25 @@ type AlertContactCreateRequest struct {
 func (client UptimeRobotApiClient) CreateAlertContact(req AlertContactCreateRequest) (ac AlertContact, err error) {
 	data := url.Values{}
 	data.Add("friendly_name", req.FriendlyName)
-	data.Add("type", fmt.Sprintf("%d", alertContactTypes[req.Type]))
+	data.Add("type", fmt.Sprintf("%d", alertContactType[req.Type]))
 	data.Add("value", req.Value)
 
 	body, err := client.MakeCall(
-		"getAlertContacts",
+		"newAlertContact",
 		data.Encode(),
 	)
 	if err != nil {
 		return
 	}
 
-	alertcontacts, ok := body["alert_contacts"].([]interface{})
+	alertcontact, ok := body["alertcontact"].(map[string]interface{})
 	if !ok {
 		j, _ := json.Marshal(body)
 		err = errors.New("Unknown response from the server: " + string(j))
 		return
 	}
 
-	alertcontact := alertcontacts[0].(map[string]interface{})
-
-	ac.ID = int(alertcontact["id"].(float64))
-	ac.FriendlyName = req.FriendlyName
-	ac.Value = req.Value
-	ac.Type = req.Type
-	ac.Status = intToString(alertContactStatuses, int(alertcontact["status"].(float64)))
-
-	return
+	return client.GetAlertContact(int(alertcontact["id"].(float64)))
 }
 
 func (client UptimeRobotApiClient) DeleteAlertContact(id int) (err error) {

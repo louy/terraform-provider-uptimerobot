@@ -28,7 +28,7 @@ func resourceAlertContact() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice(uptimerobotapi.AlertContactTypes, false),
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.AlertContactType, false),
 			},
 			"value": &schema.Schema{
 				Type:     schema.TypeString,
