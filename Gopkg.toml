@@ -29,10 +29,6 @@
   name = "github.com/hashicorp/terraform"
   version = "v0.11.7"
 
-[[constraint]]
-  name = "github.com/stretchr/testify"
-  version = "v1.2.1"
-
 [prune]
   go-tests = true
   unused-packages = true
