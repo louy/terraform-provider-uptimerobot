@@ -64,9 +64,12 @@ func resourceStatusPage() *schema.Resource {
 					Type: schema.TypeInt,
 				},
 				PromoteSingle: true,
-				// DefaultFunc: func() (interface{}, error) {
-				// 	return []int{0}, nil
-				// },
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					if k == "monitors.#" && old == "1" && new == "0" && d.Get("monitors.0").(int) == 0 {
+						return true
+					}
+					return false
+				},
 			},
 			"dns_address": &schema.Schema{
 				Type:     schema.TypeString,
