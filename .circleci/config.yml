@@ -26,10 +26,6 @@ jobs:
           command: |
             go build -v
       - run:
-          name: Run tests
-          command: |
-            go test
-      - run:
           name: Run acceptance tests
           command: |
             TF_ACC=1 go test -v ./...
