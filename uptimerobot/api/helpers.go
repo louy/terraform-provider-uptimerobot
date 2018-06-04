@@ -28,11 +28,3 @@ func intToString(m map[string]int, value int) string {
 	}
 	return ""
 }
-
-func Map(vs []interface{}, f func(interface{}) string) []string {
-	vsm := make([]string, len(vs))
-	for i, v := range vs {
-		vsm[i] = f(v)
-	}
-	return vsm
-}

@@ -9,17 +9,6 @@ import (
 	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
-var statusPageStatus = map[string]int{
-	"paused": 0,
-	"active": 1,
-}
-var statusPageSort = map[string]int{
-	"a-z":            1,
-	"z-a":            2,
-	"up-down-paused": 3,
-	"down-up-paused": 4,
-}
-
 func resourceStatusPage() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceStatusPageCreate,
@@ -48,13 +37,13 @@ func resourceStatusPage() *schema.Resource {
 			"sort": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice(mapKeys(statusPageSort), false),
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.StatusPageSort, false),
 				Default:      "a-z",
 			},
 			"status": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice(mapKeys(statusPageStatus), false),
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.StatusPageStatus, false),
 				Default:      "active",
 			},
 			"monitors": &schema.Schema{

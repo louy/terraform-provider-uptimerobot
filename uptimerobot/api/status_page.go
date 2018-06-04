@@ -13,12 +13,15 @@ var statusPageStatus = map[string]int{
 	"paused": 0,
 	"active": 1,
 }
+var StatusPageStatus = mapKeys(statusPageStatus)
+
 var statusPageSort = map[string]int{
 	"a-z":            1,
 	"z-a":            2,
 	"up-down-paused": 3,
 	"down-up-paused": 4,
 }
+var StatusPageSort = mapKeys(statusPageSort)
 
 type StatusPage struct {
 	ID           int
