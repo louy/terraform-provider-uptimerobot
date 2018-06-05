@@ -14,7 +14,7 @@ jobs:
           keys:
             - vendor-dep-{{ checksum "Gopkg.lock" }}
 
-      - run: dep ensure -vendor-only
+      - run: dep ensure -vendor-only -v
 
       - save_cache:
           key: vendor-dep-{{ checksum "Gopkg.lock" }}
