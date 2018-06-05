@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 func dataSourceAccount() *schema.Resource {
@@ -21,25 +22,19 @@ func dataSourceAccount() *schema.Resource {
 }
 
 func dataSourceAccountRead(d *schema.ResourceData, m interface{}) error {
-	body, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
-		"getAccountDetails",
-		"",
-	)
-
+	account, err := m.(uptimerobotapi.UptimeRobotApiClient).GetAccountDetails()
 	if err != nil {
 		return err
 	}
-	account := body["account"].(map[string]interface{})
 
 	d.SetId(time.Now().UTC().String())
 
-	d.Set("email", account["email"].(string))
-	d.Set("monitor_limit", int(account["monitor_limit"].(float64)))
-	d.Set("monitor_interval", int(account["monitor_interval"].(float64)))
-	d.Set("up_monitors", int(account["up_monitors"].(float64)))
-	d.Set("down_monitors", int(account["down_monitors"].(float64)))
-	d.Set("paused_monitors", int(account["paused_monitors"].(float64)))
+	d.Set("email", account.Email)
+	d.Set("monitor_limit", account.MonitorLimit)
+	d.Set("monitor_interval", account.MonitorInterval)
+	d.Set("up_monitors", account.UpMonitors)
+	d.Set("down_monitors", account.DownMonitors)
+	d.Set("paused_monitors", account.PausedMonitors)
 
 	return nil
 }

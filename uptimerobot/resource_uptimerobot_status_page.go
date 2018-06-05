@@ -1,27 +1,13 @@
 package uptimerobot
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
-	"net/url"
 	"strconv"
-	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
-
-var statusPageStatus = map[string]int{
-	"paused": 0,
-	"active": 1,
-}
-var statusPageSort = map[string]int{
-	"a-z":            1,
-	"z-a":            2,
-	"up-down-paused": 3,
-	"down-up-paused": 4,
-}
 
 func resourceStatusPage() *schema.Resource {
 	return &schema.Resource{
@@ -51,13 +37,13 @@ func resourceStatusPage() *schema.Resource {
 			"sort": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice(mapKeys(statusPageSort), false),
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.StatusPageSort, false),
 				Default:      "a-z",
 			},
 			"status": &schema.Schema{
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validation.StringInSlice(mapKeys(statusPageStatus), false),
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.StatusPageStatus, false),
 				Default:      "active",
 			},
 			"monitors": &schema.Schema{
@@ -67,6 +53,12 @@ func resourceStatusPage() *schema.Resource {
 					Type: schema.TypeInt,
 				},
 				PromoteSingle: true,
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					if k == "monitors.#" && old == "1" && new == "0" && d.Get("monitors.0").(int) == 0 {
+						return true
+					}
+					return false
+				},
 			},
 			"dns_address": &schema.Schema{
 				Type:     schema.TypeString,
@@ -85,133 +77,95 @@ func resourceStatusPage() *schema.Resource {
 }
 
 func resourceStatusPageCreate(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("type", fmt.Sprintf("%d", 1))
-	data.Add("friendly_name", d.Get("friendly_name").(string))
-	data.Add("custom_domain", d.Get("custom_domain").(string))
-	if d.Get("password").(string) != "" {
-		data.Add("password", d.Get("password").(string))
+	rawMonitors := d.Get("monitors").([]interface{})
+	monitors := make([]int, len(rawMonitors))
+	for i := range rawMonitors {
+		monitors[i] = rawMonitors[i].(int)
 	}
-	// log.Printf("[DEBUG] [monitors] %+v", d.Get("monitors").([]interface{}))
-	if len(d.Get("monitors").([]interface{})) == 0 {
-		data.Add("monitors", "0")
-	} else {
-		// log.Printf("[DEBUG] [monitors type] %s", reflect.TypeOf(d.Get("monitors").([]interface{})[0]))
-		var monitors = d.Get("monitors").([]interface{})
-		var strMonitors = make([]string, len(monitors))
-		for i, v := range monitors {
-			strMonitors[i] = strconv.Itoa(v.(int))
-		}
-		data.Add("monitors", strings.Join(strMonitors, "-"))
-	}
-	// log.Printf("[DEBUG] Sort: %s %d", d.Get("sort").(string), statusPageSort[d.Get("sort").(string)])
-	data.Add("sort", fmt.Sprintf("%d", statusPageSort[d.Get("sort").(string)]))
-	data.Add("status", fmt.Sprintf("%d", statusPageStatus[d.Get("status").(string)]))
 
-	body, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
-		"newPSP",
-		data.Encode(),
-	)
+	sp, err := m.(uptimerobotapi.UptimeRobotApiClient).CreateStatusPage(uptimerobotapi.StatusPageCreateRequest{
+		FriendlyName: d.Get("friendly_name").(string),
+		CustomDomain: d.Get("custom_domain").(string),
+		Password:     d.Get("password").(string),
+		Monitors:     monitors,
+		Sort:         d.Get("sort").(string),
+		Status:       d.Get("status").(string),
+	})
 	if err != nil {
 		return err
 	}
-	psp := body["psp"].(map[string]interface{})
-	d.SetId(fmt.Sprintf("%d", int(psp["id"].(float64))))
-	d.Set("standard_url", psp["standard_url"].(string))
-	if psp["custom_url"] != nil {
-		d.Set("custom_url", psp["custom_url"].(string))
-	} else {
-		d.Set("custom_url", nil)
-	}
 
-	d.Set("dns_address", "stats.uptimerobot.com")
+	d.SetId(fmt.Sprintf("%d", sp.ID))
+	updateStatusPageResource(d, sp)
+
 	return nil
 }
 
 func resourceStatusPageRead(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("psps", d.Id())
-
-	body, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
-		"getPSPs",
-		data.Encode(),
-	)
+	id, err := strconv.Atoi(d.Id())
 	if err != nil {
 		return err
 	}
 
-	psps, ok := body["psps"].([]interface{})
-	if !ok {
-		j, _ := json.Marshal(body)
-		return errors.New("Unknown response from the server: " + string(j))
+	sp, err := m.(uptimerobotapi.UptimeRobotApiClient).GetStatusPage(id)
+	if err != nil {
+		return err
 	}
 
-	psp := psps[0].(map[string]interface{})
-
-	d.Set("friendly_name", psp["friendly_name"].(string))
-	d.Set("standard_url", psp["standard_url"].(string))
-	if psp["custom_url"] != nil {
-		d.Set("custom_url", psp["custom_url"].(string))
-	} else {
-		d.Set("custom_url", nil)
-	}
-	d.Set("sort", intToString(statusPageSort, int(psp["sort"].(float64))))
-	d.Set("status", intToString(statusPageStatus, int(psp["status"].(float64))))
-
-	d.Set("dns_address", "stats.uptimerobot.com")
+	updateStatusPageResource(d, sp)
 
 	return nil
 }
 
 func resourceStatusPageUpdate(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("id", d.Id())
-	data.Add("type", fmt.Sprintf("%d", 1))
-	data.Add("friendly_name", d.Get("friendly_name").(string))
-	data.Add("custom_domain", d.Get("custom_domain").(string))
-	if d.Get("password").(string) != "" {
-		data.Add("password", d.Get("password").(string))
+	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return err
 	}
-	// log.Printf("[DEBUG] [monitors] %+v", d.Get("monitors").([]interface{}))
-	if len(d.Get("monitors").([]interface{})) == 0 {
-		data.Add("monitors", "0")
-	} else {
-		var monitors = d.Get("monitors").([]interface{})
-		var strMonitors = make([]string, len(monitors))
-		for i, v := range monitors {
-			strMonitors[i] = strconv.Itoa(v.(int))
-		}
-		data.Add("monitors", strings.Join(strMonitors, "-"))
-	}
-	data.Add("sort", fmt.Sprintf("%d", statusPageSort[d.Get("sort").(string)]))
-	data.Add("status", fmt.Sprintf("%d", statusPageStatus[d.Get("status").(string)]))
 
-	_, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
-		"editPSP",
-		data.Encode(),
-	)
+	rawMonitors := d.Get("monitors").([]interface{})
+	monitors := make([]int, len(rawMonitors))
+	for i := range rawMonitors {
+		monitors[i] = rawMonitors[i].(int)
+	}
+
+	sp, err := m.(uptimerobotapi.UptimeRobotApiClient).UpdateStatusPage(uptimerobotapi.StatusPageUpdateRequest{
+		ID:           id,
+		FriendlyName: d.Get("friendly_name").(string),
+		CustomDomain: d.Get("custom_domain").(string),
+		Password:     d.Get("password").(string),
+		Monitors:     monitors,
+		Sort:         d.Get("sort").(string),
+		Status:       d.Get("status").(string),
+	})
+	if err != nil {
+		return err
+	}
+
+	updateStatusPageResource(d, sp)
+
+	return nil
+}
+
+func resourceStatusPageDelete(d *schema.ResourceData, m interface{}) error {
+	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return err
+	}
+
+	err = m.(uptimerobotapi.UptimeRobotApiClient).DeleteStatusPage(id)
 	if err != nil {
 		return err
 	}
 
 	return nil
 }
-
-func resourceStatusPageDelete(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("id", d.Id())
-
-	_, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
-		"deletePSP",
-		data.Encode(),
-	)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func updateStatusPageResource(d *schema.ResourceData, sp uptimerobotapi.StatusPage) {
+	d.Set("friendly_name", sp.FriendlyName)
+	d.Set("standard_url", sp.StandardURL)
+	d.Set("custom_url", sp.CustomURL)
+	d.Set("sort", sp.Sort)
+	d.Set("status", sp.Status)
+	d.Set("dns_address", sp.DNSAddress)
+	d.Set("monitors", sp.Monitors)
 }

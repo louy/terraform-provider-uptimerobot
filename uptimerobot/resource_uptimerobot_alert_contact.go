@@ -1,33 +1,13 @@
 package uptimerobot
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
-	"net/url"
+	"strconv"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
+	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
-
-var alertContactTypes = map[string]int{
-	"sms":        1,
-	"email":      2,
-	"twitter-dm": 3,
-	"boxcar":     4,
-	"webhook":    5,
-	"pushbullet": 6,
-	"zapier":     7,
-	"pushover":   8,
-	"hipchat":    10,
-	"slack":      11,
-}
-
-var alertContactStatuses = map[string]int{
-	"not activated": 0,
-	"paused":        1,
-	"active":        2,
-}
 
 func resourceAlertContact() *schema.Resource {
 	return &schema.Resource{
@@ -48,7 +28,7 @@ func resourceAlertContact() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validation.StringInSlice(mapKeys(alertContactTypes), false),
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.AlertContactType, false),
 			},
 			"value": &schema.Schema{
 				Type:     schema.TypeString,
@@ -64,65 +44,50 @@ func resourceAlertContact() *schema.Resource {
 }
 
 func resourceAlertContactCreate(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("friendly_name", d.Get("friendly_name").(string))
-	data.Add("type", fmt.Sprintf("%d", alertContactTypes[d.Get("type").(string)]))
-	data.Add("value", d.Get("value").(string))
-
-	body, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
-		"newAlertContact",
-		data.Encode(),
-	)
+	ac, err := m.(uptimerobotapi.UptimeRobotApiClient).CreateAlertContact(
+		uptimerobotapi.AlertContactCreateRequest{
+			FriendlyName: d.Get("friendly_name").(string),
+			Type:         d.Get("type").(string),
+			Value:        d.Get("value").(string),
+		})
 	if err != nil {
 		return err
 	}
-	alertcontact := body["alertcontact"].(map[string]interface{})
-	d.SetId(fmt.Sprintf("%d", int(alertcontact["id"].(float64))))
-	d.Set("status", intToString(alertContactStatuses, 0))
+
+	d.SetId(fmt.Sprintf("%d", ac.ID))
+	updateAlertContactResource(d, ac)
+
 	return nil
 }
 
 func resourceAlertContactRead(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("alert_contacts", d.Id())
-
-	body, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
-		"getAlertContacts",
-		data.Encode(),
-	)
+	id, err := strconv.Atoi(d.Id())
 	if err != nil {
 		return err
 	}
 
-	alertcontacts, ok := body["alert_contacts"].([]interface{})
-	if !ok {
-		j, _ := json.Marshal(body)
-		return errors.New("Unknown response from the server: " + string(j))
+	ac, err := m.(uptimerobotapi.UptimeRobotApiClient).GetAlertContact(id)
+	if err != nil {
+		return err
 	}
 
-	alertcontact := alertcontacts[0].(map[string]interface{})
-
-	d.Set("friendly_name", alertcontact["friendly_name"].(string))
-	d.Set("value", alertcontact["value"].(string))
-	d.Set("type", intToString(alertContactTypes, int(alertcontact["type"].(float64))))
-	d.Set("status", intToString(alertContactStatuses, int(alertcontact["status"].(float64))))
+	updateAlertContactResource(d, ac)
 
 	return nil
 }
 
 func resourceAlertContactUpdate(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("id", d.Id())
-	data.Add("friendly_name", d.Get("friendly_name").(string))
-	data.Add("value", d.Get("value").(string))
+	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return err
+	}
 
-	_, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
-		"editAlertContact",
-		data.Encode(),
-	)
+	err = m.(uptimerobotapi.UptimeRobotApiClient).UpdateAlertContact(
+		uptimerobotapi.AlertContactUpdateRequest{
+			ID:           id,
+			FriendlyName: d.Get("friendly_name").(string),
+			Value:        d.Get("value").(string),
+		})
 	if err != nil {
 		return err
 	}
@@ -131,17 +96,22 @@ func resourceAlertContactUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAlertContactDelete(d *schema.ResourceData, m interface{}) error {
-	data := url.Values{}
-	data.Add("id", d.Id())
+	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return err
+	}
 
-	_, err := uptimerobotAPICall(
-		m.(UptimeRobotConfig).apiKey,
-		"deleteAlertContact",
-		data.Encode(),
-	)
+	err = m.(uptimerobotapi.UptimeRobotApiClient).DeleteAlertContact(id)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func updateAlertContactResource(d *schema.ResourceData, ac uptimerobotapi.AlertContact) {
+	d.Set("friendly_name", ac.FriendlyName)
+	d.Set("value", ac.Value)
+	d.Set("type", ac.Type)
+	d.Set("status", ac.Status)
 }

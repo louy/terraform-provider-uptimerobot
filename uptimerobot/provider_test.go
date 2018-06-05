@@ -31,9 +31,4 @@ func testAccPreCheck(t *testing.T) {
 	if v := os.Getenv("UPTIMEROBOT_API_KEY"); v == "" {
 		t.Fatal("UPTIMEROBOT_API_KEY must be set for acceptance tests")
 	}
-
-	err := testAccProvider.Configure(terraform.NewResourceConfig(nil))
-	if err != nil {
-		t.Fatal(err)
-	}
 }

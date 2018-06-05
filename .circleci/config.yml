@@ -14,7 +14,7 @@ jobs:
           keys:
             - vendor-dep-{{ checksum "Gopkg.lock" }}
 
-      - run: dep ensure -vendor-only
+      - run: dep ensure -vendor-only -v
 
       - save_cache:
           key: vendor-dep-{{ checksum "Gopkg.lock" }}
@@ -26,9 +26,9 @@ jobs:
           command: |
             go build -v
       - run:
-          name: Run tests
+          name: Run acceptance tests
           command: |
-            go test
+            TF_ACC=1 go test -v ./...
 
       - store_artifacts:
           path: "/go/bin/terraform-provider-uptimerobot"

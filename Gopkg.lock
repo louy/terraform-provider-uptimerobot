@@ -38,6 +38,7 @@
     "aws/credentials/ec2rolecreds",
     "aws/credentials/endpointcreds",
     "aws/credentials/stscreds",
+    "aws/csm",
     "aws/defaults",
     "aws/ec2metadata",
     "aws/endpoints",
@@ -48,6 +49,8 @@
     "internal/sdkrand",
     "internal/shareddefaults",
     "private/protocol",
+    "private/protocol/eventstream",
+    "private/protocol/eventstream/eventstreamapi",
     "private/protocol/query",
     "private/protocol/query/queryutil",
     "private/protocol/rest",
@@ -56,8 +59,8 @@
     "service/s3",
     "service/sts"
   ]
-  revision = "398d14696895d68a3409bb3ccb1cfe8abc2d4376"
-  version = "v1.13.57"
+  revision = "60a85d13d02126d8d15ea3f21fd57ac3a2774f37"
+  version = "v1.14.0"
 
 [[projects]]
   branch = "master"
@@ -78,6 +81,12 @@
   version = "v3.5.1"
 
 [[projects]]
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  revision = "346938d642f2ec3594ed81d874461961cd0faa76"
+  version = "v1.1.0"
+
+[[projects]]
   name = "github.com/fatih/color"
   packages = ["."]
   revision = "5b77d2a35fb0ede96d138fc9a99f5c9b6aef11b4"
@@ -90,7 +99,6 @@
   version = "v1.37.0"
 
 [[projects]]
-  branch = "master"
   name = "github.com/golang/protobuf"
   packages = [
     "proto",
@@ -99,7 +107,8 @@
     "ptypes/duration",
     "ptypes/timestamp"
   ]
-  revision = "3a3da3a4e26776cc22a79ef46d5d58477532dede"
+  revision = "b4deda0973fb4c70b50d226b1af49f3da59f5265"
+  version = "v1.1.0"
 
 [[projects]]
   branch = "master"
@@ -200,6 +209,11 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/hashicorp/logutils"
+  packages = ["."]
+  revision = "0dc08b1671f34c4250ce212759ebd880f743d883"
+
+[[projects]]
   name = "github.com/hashicorp/terraform"
   packages = [
     "config",
@@ -208,8 +222,11 @@
     "config/module",
     "dag",
     "flatmap",
+    "helper/config",
     "helper/hashcode",
     "helper/hilmapstructure",
+    "helper/logging",
+    "helper/resource",
     "helper/schema",
     "helper/structure",
     "helper/validation",
@@ -227,13 +244,14 @@
     "tfdiags",
     "version"
   ]
-  revision = "170a1530d1ca815788a57dbe7afae209ce9fd3ac"
+  revision = "41e50bd32a8825a84535e353c3674af8ce799161"
+  version = "v0.11.7"
 
 [[projects]]
   branch = "master"
   name = "github.com/hashicorp/yamux"
   packages = ["."]
-  revision = "2658be15c5f05e76244154714161f17e3e77de2e"
+  revision = "3520598351bb3500a49ae9563f5539666ae0a27c"
 
 [[projects]]
   name = "github.com/jmespath/go-jmespath"
@@ -301,10 +319,10 @@
   revision = "63d60e9d0dbc60cf9164e6510889b0db6683d98c"
 
 [[projects]]
-  branch = "master"
   name = "github.com/oklog/run"
   packages = ["."]
-  revision = "6934b124db28979da51d3470dadfa34d73d72652"
+  revision = "4dadeb3030eda0273a12382bb2348ffc7c9d1a39"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/posener/complete"
@@ -356,9 +374,10 @@
     "openpgp/packet",
     "openpgp/s2k"
   ]
-  revision = "ab813273cd59e1333f7ae7bff5d027d4aadf528c"
+  revision = "df8d4716b3472e4a531c33cedbe537dae921a1a9"
 
 [[projects]]
+  branch = "master"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -371,7 +390,7 @@
     "internal/timeseries",
     "trace"
   ]
-  revision = "dfa909b99c79129e1100513e5cd36307665e5723"
+  revision = "1e491301e022f8f977054da4c2d852decd59571f"
 
 [[projects]]
   branch = "master"
@@ -404,7 +423,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "694d95ba50e67b2e363f3483057db5d4910c18f9"
+  revision = "81158efcc9f219c511e4d3c0d61a0e6e49c01a24"
 
 [[projects]]
   name = "google.golang.org/grpc"
@@ -424,7 +443,6 @@
     "health",
     "health/grpc_health_v1",
     "internal",
-    "internal/grpcrand",
     "keepalive",
     "metadata",
     "naming",
@@ -437,11 +455,12 @@
     "tap",
     "transport"
   ]
-  revision = "bd7f82c7b1295ecec7cbec0d4be6c7d1ac470941"
+  revision = "41344da2231b913fa3d983840a57a6b1b7b631a1"
+  version = "v1.12.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b6231c74e7c041842f1b9e7ce99d1de5107d48999a801575b9bd3ca84749d3e1"
+  inputs-digest = "b15cfea01320302aa8f1f5be42abaa8f8257590c2a3cfa81b46dc303f8753605"
   solver-name = "gps-cdcl"
   solver-version = 1

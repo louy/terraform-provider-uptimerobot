@@ -12,19 +12,17 @@ package uptimerobot
 import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
-
-type UptimeRobotConfig struct {
-	apiKey string
-}
 
 // Provider returns a terraform.ResourceProvider.
 func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"api_key": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc("UPTIMEROBOT_API_KEY", nil),
 			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
@@ -36,9 +34,7 @@ func Provider() terraform.ResourceProvider {
 			"uptimerobot_status_page":   resourceStatusPage(),
 		},
 		ConfigureFunc: func(r *schema.ResourceData) (interface{}, error) {
-			config := UptimeRobotConfig{
-				apiKey: r.Get("api_key").(string),
-			}
+			config := uptimerobotapi.New(r.Get("api_key").(string))
 			return config, nil
 		},
 	}
