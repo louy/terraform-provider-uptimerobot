@@ -78,6 +78,11 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 		return
 	}
 
+	if len(monitors) < 1 {
+		err = errors.New("Monitor not found: " + string(id))
+		return
+	}
+
 	monitor := monitors[0].(map[string]interface{})
 
 	m.ID = id
