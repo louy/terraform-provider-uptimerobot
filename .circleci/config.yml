@@ -44,3 +44,15 @@ jobs:
       - store_artifacts:
           path: "/go/src/terraform-provider-uptimerobot/dist"
           destination: dist
+
+workflows:
+  version: 2
+
+  build:
+    jobs:
+      - build
+    filters:
+      branches:
+        only: /.*/
+      tags:
+        only: /.*/
