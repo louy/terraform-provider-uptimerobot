@@ -160,7 +160,13 @@ func resourceMonitorRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
+	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return err
+	}
+
 	req := uptimerobotapi.MonitorUpdateRequest{
+		ID:           id,
 		FriendlyName: d.Get("friendly_name").(string),
 		URL:          d.Get("url").(string),
 		Type:         d.Get("type").(string),
