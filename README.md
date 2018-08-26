@@ -11,19 +11,20 @@ provider "uptimerobot" {
 resource "uptimerobot_alert_contact" "slack" {
   friendly_name = "Slack Alert"
   type          = "slack"
-  webhook_url   = "https://hooks.slack.com/services/XXXXXXX"
+  value         = "https://hooks.slack.com/services/XXXXXXX"
 }
 
 resource "uptimerobot_monitor" "main" {
   friendly_name = "My Monitor"
   type          = "http"
   url           = "http://example.com"
+  # pro allows 60 seconds
   interval      = 300
 
   alert_contact {
     id = "${resource.uptimerobot_alert_contact.slack.id}"
-    # threshold  = 0
-    # recurrence = 0
+    # threshold  = 0  # pro only
+    # recurrence = 0  # pro only
   }
 }
 
