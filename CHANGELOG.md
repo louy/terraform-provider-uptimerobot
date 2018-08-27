@@ -1,6 +1,6 @@
 # v0.2.0
 - resource monitor: add support for interval attribute (#7)
-- resource alert_contact: remove ForceNew on url (#12)
+- resource monitor: remove ForceNew on url (#12)
 - various documentation updates (#8, #10)
 
 # v0.1.1
