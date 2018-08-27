@@ -15,6 +15,38 @@ func TestUptimeRobotDataResourceMonitor_http_monitor(t *testing.T) {
 	var FriendlyName = "TF Test: http monitor"
 	var Type = "http"
 	var URL = "https://google.com"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+				}
+				`, FriendlyName, Type, URL),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestUptimeRobotDataResourceMonitor_change_url(t *testing.T) {
+	var FriendlyName = "TF Test: http monitor"
+	var Type = "http"
+	var URL = "https://google.com"
 	var URL2 = "https://google.co.uk"
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -23,7 +55,8 @@ func TestUptimeRobotDataResourceMonitor_http_monitor(t *testing.T) {
 		Steps: []resource.TestStep{
 			resource.TestStep{
 				Config: fmt.Sprintf(`
-				resource "uptimerobot_monitor" "test" { friendly_name = "%s"
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
 					type          = "%s"
 					url           = "%s"
 				}
@@ -42,7 +75,8 @@ func TestUptimeRobotDataResourceMonitor_http_monitor(t *testing.T) {
 			// Change url
 			resource.TestStep{
 				Config: fmt.Sprintf(`
-				resource "uptimerobot_monitor" "test" { friendly_name = "%s"
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
 					type          = "%s"
 					url           = "%s"
 				}
@@ -83,6 +117,63 @@ func TestUptimeRobotDataResourceMonitor_ping_monitor(t *testing.T) {
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestUptimeRobotDataResourceMonitor_custom_interval(t *testing.T) {
+	var FriendlyName = "TF Test: ping monitor"
+	var Type = "ping"
+	var URL = "1.1.1.1"
+	var Interval = 300
+	var Interval2 = 360
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					interval      = %d
+				}
+				`, FriendlyName, Type, URL, Interval),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "interval", fmt.Sprintf(`%d`, Interval)),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					interval      = %d
+				}
+				`, FriendlyName, Type, URL, Interval2),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "interval", fmt.Sprintf(`%d`, Interval2)),
 				),
 			},
 			resource.TestStep{
