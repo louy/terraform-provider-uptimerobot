@@ -7,7 +7,7 @@ description: |-
 ---
 
 # UptimeRobot Provider
-The UptimeRobot provider is used to interact with the resources supported by UptimeRobot. The provider needs to be configured with the proper credentials before it can be used.
+The [UptimeRobot]((https://uptimerobot.com/) provider is used to interact with the resources supported by UptimeRobot. The provider needs to be configured with the proper credentials before it can be used.
 Use the navigation to the left to read about the available resources.
 
 ## Example Usage
@@ -29,8 +29,12 @@ resource "uptimerobot_monitor" "web" {
 ## Authentication
 The UptimeRobot provider needs an account-specific (main) api key to work. You can find that key for your account in the [My Settings](https://uptimerobot.com/dashboard#mySettings) page on UptimeRobot's website.
 
-## Argument Reference
+## Configuration Reference
 
-The following arguments are supported in the `provider` block:
+The following keys can be used to configure the provider.
 
-* `api_key` - (Required) UptimeRobot's account-specific api key.
+* `api_key` - (optional) UptimeRobot's account-specific api key.
+
+Credentials can also be specified using any of the following environment variables (listed in order of precedence):
+
+* `UPTIMEROBOT_API_KEY`

@@ -27,7 +27,6 @@ func resourceMonitor() *schema.Resource {
 			"url": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 			"type": {
 				Type:         schema.TypeString,
@@ -127,6 +126,10 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 		req.HTTPPassword = d.Get("http_password").(string)
 		break
 	}
+
+	// Add optional attributes
+	req.Interval = d.Get("interval").(int)
+
 	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, len(d.Get("alert_contact").([]interface{})))
 	for k, v := range d.Get("alert_contact").([]interface{}) {
 		req.AlertContacts[k] = uptimerobotapi.MonitorRequestAlertContact{
@@ -189,6 +192,10 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 		req.HTTPPassword = d.Get("http_password").(string)
 		break
 	}
+
+	// Add optional attributes
+	req.Interval = d.Get("interval").(int)
+
 	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, len(d.Get("alert_contact").([]interface{})))
 	for k, v := range d.Get("alert_contact").([]interface{}) {
 		req.AlertContacts[k] = uptimerobotapi.MonitorRequestAlertContact{
