@@ -41,7 +41,7 @@ func resourceMonitor() *schema.Resource {
 				// required for port monitoring
 			},
 			"port": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeInt,
 				Optional: true,
 				// required for port monitoring
 			},
