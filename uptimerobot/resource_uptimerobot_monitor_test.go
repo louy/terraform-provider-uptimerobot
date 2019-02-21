@@ -43,6 +43,79 @@ func TestUptimeRobotDataResourceMonitor_http_monitor(t *testing.T) {
 	})
 }
 
+func TestUptimeRobotDataResourceMonitor_http_port_monitor(t *testing.T) {
+	var FriendlyName = "TF Test: http port monitor"
+	var Type = "port"
+	var URL = "google.com"
+	var SubType = "http"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					sub_type      = "%s"
+				}
+				`, FriendlyName, Type, URL, SubType),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "sub_type", SubType),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestUptimeRobotDataResourceMonitor_custom_port_monitor(t *testing.T) {
+	var FriendlyName = "TF Test: custom port monitor"
+	var Type = "port"
+	var URL = "google.com"
+	var SubType = "custom"
+	var Port = 8080
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					sub_type      = "%s"
+					port          = %d
+				}
+				`, FriendlyName, Type, URL, SubType, Port),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "sub_type", SubType),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "port", fmt.Sprintf(`%d`, Port)),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestUptimeRobotDataResourceMonitor_change_url(t *testing.T) {
 	var FriendlyName = "TF Test: http monitor"
 	var Type = "http"

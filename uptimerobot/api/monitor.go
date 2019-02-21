@@ -96,7 +96,11 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 	switch m.Type {
 	case "port":
 		m.SubType = intToString(monitorSubType, int(monitor["sub_type"].(float64)))
-		m.Port = int(monitor["port"].(float64))
+		if (m.SubType != "custom") {
+			m.Port = 0
+		} else {
+			m.Port = int(monitor["port"].(float64))
+		}
 		break
 	case "keyword":
 		m.KeywordType = intToString(monitorKeywordType, int(monitor["keyword_type"].(float64)))
