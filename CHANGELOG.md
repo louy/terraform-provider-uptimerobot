@@ -1,3 +1,6 @@
+# v0.2.1
+- resource monitor: fix broken `port` monitor type (#17)
+
 # v0.2.0
 - resource monitor: add support for interval attribute (#7)
 - resource monitor: remove ForceNew on url (#12)
