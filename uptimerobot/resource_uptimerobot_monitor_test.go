@@ -43,6 +43,41 @@ func TestUptimeRobotDataResourceMonitor_http_monitor(t *testing.T) {
 	})
 }
 
+func TestUptimeRobotDataResourceMonitor_port_monitor(t *testing.T) {
+	var FriendlyName = "TF Test: http monitor"
+	var Type = "port"
+	var URL = "google.com"
+	var Port = "8080"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					port          = "%s"
+				}
+				`, FriendlyName, Type, URL, Port),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "port", Port),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestUptimeRobotDataResourceMonitor_change_url(t *testing.T) {
 	var FriendlyName = "TF Test: http monitor"
 	var Type = "http"
