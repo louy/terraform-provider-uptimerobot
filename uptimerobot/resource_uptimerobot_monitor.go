@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
+	uptimerobotapi "github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 func resourceMonitor() *schema.Resource {
@@ -133,7 +133,9 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, len(d.Get("alert_contact").([]interface{})))
 	for k, v := range d.Get("alert_contact").([]interface{}) {
 		req.AlertContacts[k] = uptimerobotapi.MonitorRequestAlertContact{
-			ID: v.(map[string]interface{})["id"].(int),
+			ID:         v.(map[string]interface{})["id"].(int),
+			Threshold:  v.(map[string]interface{})["threshold"].(int),
+			Recurrence: v.(map[string]interface{})["recurrence"].(int),
 		}
 	}
 
