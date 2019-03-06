@@ -1,12 +1,9 @@
 package uptimerobot
 
 import (
-	"fmt"
-	"strconv"
-
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
-	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
+	uptimerobotapi "github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 func resourceAlertContact() *schema.Resource {
@@ -54,17 +51,14 @@ func resourceAlertContactCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	d.SetId(fmt.Sprintf("%d", ac.ID))
+	d.SetId(ac.ID)
 	updateAlertContactResource(d, ac)
 
 	return nil
 }
 
 func resourceAlertContactRead(d *schema.ResourceData, m interface{}) error {
-	id, err := strconv.Atoi(d.Id())
-	if err != nil {
-		return err
-	}
+	id := d.Id()
 
 	ac, err := m.(uptimerobotapi.UptimeRobotApiClient).GetAlertContact(id)
 	if err != nil {
@@ -77,12 +71,9 @@ func resourceAlertContactRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAlertContactUpdate(d *schema.ResourceData, m interface{}) error {
-	id, err := strconv.Atoi(d.Id())
-	if err != nil {
-		return err
-	}
+	id := d.Id()
 
-	err = m.(uptimerobotapi.UptimeRobotApiClient).UpdateAlertContact(
+	err := m.(uptimerobotapi.UptimeRobotApiClient).UpdateAlertContact(
 		uptimerobotapi.AlertContactUpdateRequest{
 			ID:           id,
 			FriendlyName: d.Get("friendly_name").(string),
@@ -96,12 +87,9 @@ func resourceAlertContactUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceAlertContactDelete(d *schema.ResourceData, m interface{}) error {
-	id, err := strconv.Atoi(d.Id())
-	if err != nil {
-		return err
-	}
+	id := d.Id()
 
-	err = m.(uptimerobotapi.UptimeRobotApiClient).DeleteAlertContact(id)
+	err := m.(uptimerobotapi.UptimeRobotApiClient).DeleteAlertContact(id)
 	if err != nil {
 		return err
 	}

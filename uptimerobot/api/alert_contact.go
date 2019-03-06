@@ -30,17 +30,51 @@ var alertContactStatus = map[string]int{
 var AlertContactStatus = mapKeys(alertContactStatus)
 
 type AlertContact struct {
-	ID           int    `json:"id"`
+	ID           string `json:"id"`
 	FriendlyName string `json:"friendly_name"`
 	Value        string `json:"value"`
 	Type         string
 	Status       string
 }
 
-func (client UptimeRobotApiClient) GetAlertContact(id int) (ac AlertContact, err error) {
+func (client UptimeRobotApiClient) GetAlertContacts() (acs []AlertContact, err error) {
+	data := url.Values{}
+
+	body, err := client.MakeCall(
+		"getAlertContacts",
+		data.Encode(),
+	)
+	if err != nil {
+		return
+	}
+
+	alertcontacts, ok := body["alert_contacts"].([]interface{})
+	if !ok {
+		j, _ := json.Marshal(body)
+		err = errors.New("Unknown response from the server: " + string(j))
+		return
+	}
+
+	for _, i := range alertcontacts {
+		alertcontact := i.(map[string]interface{})
+		id := alertcontact["id"].(string)
+		ac := AlertContact{
+			id,
+			alertcontact["friendly_name"].(string),
+			alertcontact["value"].(string),
+			intToString(alertContactType, int(alertcontact["type"].(float64))),
+			intToString(alertContactStatus, int(alertcontact["status"].(float64))),
+		}
+		acs = append(acs, ac)
+	}
+
+	return
+}
+
+func (client UptimeRobotApiClient) GetAlertContact(id string) (ac AlertContact, err error) {
 	ac.ID = id
 	data := url.Values{}
-	data.Add("alert_contacts", fmt.Sprintf("%d", id))
+	data.Add("alert_contacts", id)
 
 	body, err := client.MakeCall(
 		"getAlertContacts",
@@ -94,12 +128,12 @@ func (client UptimeRobotApiClient) CreateAlertContact(req AlertContactCreateRequ
 		return
 	}
 
-	return client.GetAlertContact(int(alertcontact["id"].(float64)))
+	return client.GetAlertContact(alertcontact["id"].(string))
 }
 
-func (client UptimeRobotApiClient) DeleteAlertContact(id int) (err error) {
+func (client UptimeRobotApiClient) DeleteAlertContact(id string) (err error) {
 	data := url.Values{}
-	data.Add("id", fmt.Sprintf("%d", id))
+	data.Add("id", id)
 
 	_, err = client.MakeCall(
 		"deleteAlertContact",
@@ -112,14 +146,14 @@ func (client UptimeRobotApiClient) DeleteAlertContact(id int) (err error) {
 }
 
 type AlertContactUpdateRequest struct {
-	ID           int
+	ID           string
 	FriendlyName string
 	Value        string
 }
 
 func (client UptimeRobotApiClient) UpdateAlertContact(req AlertContactUpdateRequest) (err error) {
 	data := url.Values{}
-	data.Add("id", fmt.Sprintf("%d", req.ID))
+	data.Add("id", req.ID)
 	data.Add("friendly_name", req.FriendlyName)
 	data.Add("value", req.Value)
 

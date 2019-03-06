@@ -2,13 +2,12 @@ package uptimerobot
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
+	uptimerobotapi "github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 func TestUptimeRobotDataResourceAlertContact_email(t *testing.T) {
@@ -127,12 +126,9 @@ func testAccCheckAlertContactDestroy(s *terraform.State) error {
 			continue
 		}
 
-		id, err := strconv.Atoi(rs.Primary.ID)
-		if err != nil {
-			return err
-		}
+		id := rs.Primary.ID
 
-		_, err = client.GetAlertContact(id)
+		_, err := client.GetAlertContact(id)
 
 		if err == nil {
 			return fmt.Errorf("Alert contact still exists")

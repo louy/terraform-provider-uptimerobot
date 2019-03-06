@@ -26,7 +26,8 @@ func Provider() terraform.ResourceProvider {
 			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"uptimerobot_account": dataSourceAccount(),
+			"uptimerobot_account":       dataSourceAccount(),
+			"uptimerobot_alert_contact": dataSourceAlertContact(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"uptimerobot_alert_contact": resourceAlertContact(),
