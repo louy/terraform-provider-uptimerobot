@@ -96,7 +96,7 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 	switch m.Type {
 	case "port":
 		m.SubType = intToString(monitorSubType, int(monitor["sub_type"].(float64)))
-		if (m.SubType != "custom") {
+		if m.SubType != "custom" {
 			m.Port = 0
 		} else {
 			m.Port = int(monitor["port"].(float64))
@@ -119,7 +119,9 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 }
 
 type MonitorRequestAlertContact struct {
-	ID int
+	ID         int
+	Threshold  int
+	Recurrence int
 }
 type MonitorCreateRequest struct {
 	FriendlyName string
@@ -164,7 +166,7 @@ func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Mo
 	}
 	acStrings := make([]string, len(req.AlertContacts))
 	for k, v := range req.AlertContacts {
-		acStrings[k] = fmt.Sprintf("%d", v.ID)
+		acStrings[k] = fmt.Sprintf("%d_%d_%d", v.ID, v.Threshold, v.Recurrence)
 	}
 	data.Add("alert_contacts", strings.Join(acStrings, "-"))
 
@@ -227,7 +229,7 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 	}
 	acStrings := make([]string, len(req.AlertContacts))
 	for k, v := range req.AlertContacts {
-		acStrings[k] = fmt.Sprintf("%d", v.ID)
+		acStrings[k] = fmt.Sprintf("%d_%d_%d", v.ID, v.Threshold, v.Recurrence)
 	}
 	data.Add("alert_contacts", strings.Join(acStrings, "-"))
 
