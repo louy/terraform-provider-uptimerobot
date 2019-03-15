@@ -153,12 +153,12 @@ func TestUptimeRobotDataResourceMonitor_custom_alert_contact_threshold_and_recur
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "alert_contact.0.recurrence", "0"),
 				),
 			},
-			// uptimerobot doesn't support pulling alert_contact
-			// resource.TestStep{
-			// 	ResourceName:      "uptimerobot_monitor.test",
-			// 	ImportState:       true,
-			// 	ImportStateVerify: true,
-			// },
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				// uptimerobot doesn't support pulling alert_contact
+				// ImportStateVerify: true,
+			},
 		},
 	})
 }
