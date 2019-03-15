@@ -116,8 +116,8 @@ func TestUptimeRobotDataResourceMonitor_custom_port_monitor(t *testing.T) {
 	})
 }
 
-func TestUptimeRobotDataResourceMonitorAlertContact(t *testing.T) {
-	var FriendlyName = "TF Test: http monitor"
+func TestUptimeRobotDataResourceMonitor_custom_alert_contact_threshold_and_recurrence(t *testing.T) {
+	var FriendlyName = "TF Test: custom alert contact threshold & recurrence"
 	var Type = "http"
 	var URL = "https://google.com"
 	resource.Test(t, resource.TestCase{
@@ -153,7 +153,7 @@ func TestUptimeRobotDataResourceMonitorAlertContact(t *testing.T) {
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "alert_contact.0.recurrence", "0"),
 				),
 			},
-			// uptime robot doesn't support pulling alert_contact
+			// uptimerobot doesn't support pulling alert_contact
 			// resource.TestStep{
 			// 	ResourceName:      "uptimerobot_monitor.test",
 			// 	ImportState:       true,
