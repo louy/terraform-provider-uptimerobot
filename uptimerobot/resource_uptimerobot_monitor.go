@@ -95,8 +95,11 @@ func resourceMonitor() *schema.Resource {
 					},
 				},
 			},
+			"custom_http_headers": {
+				Type:     schema.TypeMap,
+				Optional: true,
+			},	
 			// TODO - mwindows
-			// TODO - custom_http_headers
 			// TODO - ignore_ssl_errors
 		},
 	}
@@ -137,6 +140,13 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 			Threshold:  v.(map[string]interface{})["threshold"].(int),
 			Recurrence: v.(map[string]interface{})["recurrence"].(int),
 		}
+	}
+
+	// custom_http_headers
+	httpHeaderMap := d.Get("custom_http_headers").(map[string]interface{})
+	req.CustomHTTPHeaders = make(map[string]string, len(httpHeaderMap))
+	for k, v := range httpHeaderMap {
+		req.CustomHTTPHeaders[k] = v.(string)
 	}
 
 	monitor, err := m.(uptimerobotapi.UptimeRobotApiClient).CreateMonitor(req)
@@ -205,6 +215,13 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 
+	// custom_http_headers
+	httpHeaderMap := d.Get("custom_http_headers").(map[string]interface{})
+	req.CustomHTTPHeaders = make(map[string]string, len(httpHeaderMap))
+	for k, v := range httpHeaderMap {
+		req.CustomHTTPHeaders[k] = v.(string)
+	}
+
 	monitor, err := m.(uptimerobotapi.UptimeRobotApiClient).UpdateMonitor(req)
 	if err != nil {
 		return err
@@ -242,4 +259,6 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) {
 
 	d.Set("http_username", m.HTTPUsername)
 	d.Set("http_password", m.HTTPPassword)
+
+	d.Set("custom_http_headers", m.CustomHTTPHeaders)
 }

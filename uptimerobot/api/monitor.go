@@ -57,11 +57,15 @@ type Monitor struct {
 
 	HTTPUsername string `json:"http_username"`
 	HTTPPassword string `json:"http_password"`
+
+	CustomHTTPHeaders  map[string]string
 }
 
 func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 	data := url.Values{}
 	data.Add("monitors", fmt.Sprintf("%d", id))
+	// get custom http header
+	data.Add("custom_http_headers", fmt.Sprintf("%d", 1))
 
 	body, err := client.MakeCall(
 		"getMonitors",
@@ -115,6 +119,12 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 		break
 	}
 
+	customHTTPHeaders := make(map[string]string)
+	for k, v := range monitor["custom_http_headers"].(map[string]interface{}) {
+		customHTTPHeaders[k] = v.(string)
+	}
+	m.CustomHTTPHeaders = customHTTPHeaders
+
 	return
 }
 
@@ -139,6 +149,8 @@ type MonitorCreateRequest struct {
 	HTTPPassword string
 
 	AlertContacts []MonitorRequestAlertContact
+
+	CustomHTTPHeaders  map[string]string
 }
 
 func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Monitor, err error) {
@@ -169,6 +181,14 @@ func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Mo
 		acStrings[k] = fmt.Sprintf("%d_%d_%d", v.ID, v.Threshold, v.Recurrence)
 	}
 	data.Add("alert_contacts", strings.Join(acStrings, "-"))
+
+	// custom http headers
+	if len(req.CustomHTTPHeaders) > 0 {
+		jsonData, err := json.Marshal(req.CustomHTTPHeaders)
+		if err == nil {
+			data.Add("custom_http_headers", string(jsonData))
+		}
+	}
 
 	body, err := client.MakeCall(
 		"newMonitor",
@@ -201,6 +221,8 @@ type MonitorUpdateRequest struct {
 	HTTPPassword string
 
 	AlertContacts []MonitorRequestAlertContact
+
+	CustomHTTPHeaders  map[string]string
 }
 
 func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Monitor, err error) {
@@ -232,6 +254,17 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 		acStrings[k] = fmt.Sprintf("%d_%d_%d", v.ID, v.Threshold, v.Recurrence)
 	}
 	data.Add("alert_contacts", strings.Join(acStrings, "-"))
+
+	// custom http headers
+	if len(req.CustomHTTPHeaders) > 0 {
+		jsonData, err := json.Marshal(req.CustomHTTPHeaders)
+		if err == nil {
+			data.Add("custom_http_headers", string(jsonData))
+		}
+	} else {
+		//delete custom http headers when it is empty
+		data.Add("custom_http_headers", "{}")
+	}
 
 	_, err = client.MakeCall(
 		"editMonitor",
