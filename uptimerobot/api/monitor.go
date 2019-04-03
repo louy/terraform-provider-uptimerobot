@@ -129,7 +129,7 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 }
 
 type MonitorRequestAlertContact struct {
-	ID         int
+	ID         string
 	Threshold  int
 	Recurrence int
 }

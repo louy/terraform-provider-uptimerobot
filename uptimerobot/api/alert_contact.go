@@ -7,6 +7,9 @@ import (
 	"net/url"
 )
 
+// maximum pagination depth to allow (10*50=500 entries)
+const page_limit = 10
+
 var alertContactType = map[string]int{
 	"sms":        1,
 	"email":      2,
@@ -40,32 +43,45 @@ type AlertContact struct {
 func (client UptimeRobotApiClient) GetAlertContacts() (acs []AlertContact, err error) {
 	data := url.Values{}
 
-	body, err := client.MakeCall(
-		"getAlertContacts",
-		data.Encode(),
-	)
-	if err != nil {
-		return
-	}
+	var total float64
 
-	alertcontacts, ok := body["alert_contacts"].([]interface{})
-	if !ok {
-		j, _ := json.Marshal(body)
-		err = errors.New("Unknown response from the server: " + string(j))
-		return
-	}
-
-	for _, i := range alertcontacts {
-		alertcontact := i.(map[string]interface{})
-		id := alertcontact["id"].(string)
-		ac := AlertContact{
-			id,
-			alertcontact["friendly_name"].(string),
-			alertcontact["value"].(string),
-			intToString(alertContactType, int(alertcontact["type"].(float64))),
-			intToString(alertContactStatus, int(alertcontact["status"].(float64))),
+	for i := 0; i < page_limit; i++ {
+		body, err := client.MakeCall(
+			"getAlertContacts",
+			data.Encode(),
+		)
+		if err != nil {
+			return nil, err
 		}
-		acs = append(acs, ac)
+
+		alertcontacts, ok := body["alert_contacts"].([]interface{})
+		if !ok {
+			j, _ := json.Marshal(body)
+			err = errors.New("Unknown response from the server: " + string(j))
+			return nil, err
+		}
+
+		for _, i := range alertcontacts {
+			alertcontact := i.(map[string]interface{})
+			id := alertcontact["id"].(string)
+			ac := AlertContact{
+				id,
+				alertcontact["friendly_name"].(string),
+				alertcontact["value"].(string),
+				intToString(alertContactType, int(alertcontact["type"].(float64))),
+				intToString(alertContactStatus, int(alertcontact["status"].(float64))),
+			}
+			acs = append(acs, ac)
+		}
+
+		total = body["total"].(float64)
+		if float64(len(acs)) == total {
+			break
+		}
+	}
+
+	if float64(len(acs)) != total {
+		err = errors.New("Hitting pagination limit of: " + string(page_limit))
 	}
 
 	return
