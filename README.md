@@ -22,7 +22,7 @@ resource "uptimerobot_monitor" "main" {
   interval      = 300
 
   alert_contact {
-    id = "${resource.uptimerobot_alert_contact.slack.id}"
+    id = "${uptimerobot_alert_contact.slack.id}"
     # threshold  = 0  # pro only
     # recurrence = 0  # pro only
   }
@@ -33,14 +33,14 @@ resource "uptimerobot_status_page" "main" {
   custom_domain  = "status.example.com"
   password       = "WeAreAwsome"
   sort_monitors  = "down-up-paused"
-  monitors       = ["${resource.uptimerobot_monitor.main.id}"]
+  monitors       = ["${uptimerobot_monitor.main.id}"]
   hide_url_links = false # pro only
 }
 
 resource "aws_route53_record" {
   zone_id = "[MY ZONE ID]"
   type    = "CNAME"
-  records = ["${resource.uptimerobot_status_page.main.dns_address}"]
+  records = ["${uptimerobot_status_page.main.dns_address}"]
 }
 
 ```
