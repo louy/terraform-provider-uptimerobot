@@ -163,6 +163,42 @@ func TestUptimeRobotDataResourceMonitor_custom_alert_contact_threshold_and_recur
 	})
 }
 
+func TestUptimeRobotDataResourceMonitor_custom_http_headers(t *testing.T) {
+	var FriendlyName = "TF Test:  custom http headers"
+	var Type = "http"
+	var URL = "https://google.com"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					custom_http_headers {
+						// Accept-Language = "en"
+					}
+				}
+				`, FriendlyName, Type, URL),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "custom_http_headers.%", "0"),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestUptimeRobotDataResourceMonitor_change_url(t *testing.T) {
 	var FriendlyName = "TF Test: http monitor"
 	var Type = "http"
