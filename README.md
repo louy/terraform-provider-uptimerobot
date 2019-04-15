@@ -1,4 +1,5 @@
 # Terraform UptimeRobot Provider
+[![CircleCI](https://circleci.com/gh/louy/terraform-provider-uptimerobot.svg?style=svg)](https://circleci.com/gh/louy/terraform-provider-uptimerobot)
 
 ## Getting started
 
