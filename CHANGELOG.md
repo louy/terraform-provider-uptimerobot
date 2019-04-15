@@ -1,3 +1,6 @@
+# v0.3.1
+- resource monitor: add support for `custom_http_headers` ([#20](https://github.com/louy/terraform-provider-uptimerobot/pull/20) by [@leeif](https://github.com/leeif))
+
 # v0.3.0
 - resource monitor: fix support for `recurrence` and `threshold` in `alert_contact` ([#18](https://github.com/louy/terraform-provider-uptimerobot/pull/18) by [@drubin](https://github.com/drubin))
 - make release builds more portable by adding the `CGO_ENABLED=0` flag ([#19](https://github.com/louy/terraform-provider-uptimerobot/pull/19) by [@Novex](https://github.com/Novex))
