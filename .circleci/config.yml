@@ -1,6 +1,9 @@
 version: 2
 jobs:
   build:
+    environment:
+      CC_TEST_REPORTER_ID: 52729bbe50d1d3f27774761a3ae11ce34b3a14fbbdfdce903f8736eac52f30c5
+
     docker:
       # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
       - image: circleci/golang:1.10
@@ -22,13 +25,22 @@ jobs:
             - ./vendor
 
       - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            # download test reporter as a static binary
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+
+      - run:
           name: Build
           command: |
             go build -v
       - run:
           name: Run acceptance tests
           command: |
-            TF_ACC=1 go test -v ./...
+            ./cc-test-reporter before-build
+            TF_ACC=1 go test -coverprofile c.out -v ./...
+            ./cc-test-reporter after-build --exit-code $?
 
       - store_artifacts:
           path: "/go/bin/terraform-provider-uptimerobot"
