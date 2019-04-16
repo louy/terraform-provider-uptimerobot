@@ -200,7 +200,7 @@ func TestUptimeRobotDataResourceMonitor_custom_http_headers(t *testing.T) {
 }
 
 func TestUptimeRobotDataResourceMonitor_change_url(t *testing.T) {
-	var FriendlyName = "TF Test: http monitor"
+	var FriendlyName = "TF Test: change url"
 	var Type = "http"
 	var URL = "https://google.com"
 	var URL2 = "https://google.co.uk"
