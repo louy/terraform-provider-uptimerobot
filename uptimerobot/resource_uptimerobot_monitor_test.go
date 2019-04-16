@@ -15,6 +15,7 @@ func TestUptimeRobotDataResourceMonitor_http_monitor(t *testing.T) {
 	var FriendlyName = "TF Test: http monitor"
 	var Type = "http"
 	var URL = "https://google.com"
+	var URL2 = "https://yahoo.com"
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -39,6 +40,23 @@ func TestUptimeRobotDataResourceMonitor_http_monitor(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+				}
+				`, FriendlyName, Type, URL2),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL2),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -48,6 +66,7 @@ func TestUptimeRobotDataResourceMonitor_keyword_monitor(t *testing.T) {
 	var Type = "keyword"
 	var URL = "https://google.com"
 	var KeywordType = "not exists"
+	var KeywordType2 = "exists"
 	var KeywordValue = "yahoo"
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -77,6 +96,25 @@ func TestUptimeRobotDataResourceMonitor_keyword_monitor(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					keyword_type  = "%s"
+					keyword_value = "%s"
+				}
+				`, FriendlyName, Type, URL, KeywordType2, KeywordValue),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "keyword_type", KeywordType2),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
 		},
 	})
 }
@@ -85,6 +123,7 @@ func TestUptimeRobotDataResourceMonitor_http_port_monitor(t *testing.T) {
 	var FriendlyName = "TF Test: http port monitor"
 	var Type = "port"
 	var URL = "google.com"
+	var URL2 = "yahoo.com"
 	var SubType = "http"
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -105,6 +144,24 @@ func TestUptimeRobotDataResourceMonitor_http_port_monitor(t *testing.T) {
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "sub_type", SubType),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					sub_type      = "%s"
+				}
+				`, FriendlyName, Type, URL2, SubType),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL2),
 				),
 			},
 			resource.TestStep{
@@ -226,59 +283,6 @@ func TestUptimeRobotDataResourceMonitor_custom_http_headers(t *testing.T) {
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "custom_http_headers.%", "0"),
-				),
-			},
-			resource.TestStep{
-				ResourceName:      "uptimerobot_monitor.test",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
-func TestUptimeRobotDataResourceMonitor_change_url(t *testing.T) {
-	var FriendlyName = "TF Test: change url"
-	var Type = "http"
-	var URL = "https://google.com"
-	var URL2 = "https://google.co.uk"
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckMonitorDestroy,
-		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: fmt.Sprintf(`
-				resource "uptimerobot_monitor" "test" {
-					friendly_name = "%s"
-					type          = "%s"
-					url           = "%s"
-				}
-				`, FriendlyName, Type, URL),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
-					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
-					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
-				),
-			},
-			resource.TestStep{
-				ResourceName:      "uptimerobot_monitor.test",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-			// Change url
-			resource.TestStep{
-				Config: fmt.Sprintf(`
-				resource "uptimerobot_monitor" "test" {
-					friendly_name = "%s"
-					type          = "%s"
-					url           = "%s"
-				}
-				`, FriendlyName, Type, URL2),
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
-					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
-					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL2),
 				),
 			},
 			resource.TestStep{
