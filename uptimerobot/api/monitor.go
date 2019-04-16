@@ -58,7 +58,7 @@ type Monitor struct {
 	HTTPUsername string `json:"http_username"`
 	HTTPPassword string `json:"http_password"`
 
-	CustomHTTPHeaders  map[string]string
+	CustomHTTPHeaders map[string]string
 }
 
 func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
@@ -150,7 +150,7 @@ type MonitorCreateRequest struct {
 
 	AlertContacts []MonitorRequestAlertContact
 
-	CustomHTTPHeaders  map[string]string
+	CustomHTTPHeaders map[string]string
 }
 
 func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Monitor, err error) {
@@ -222,7 +222,7 @@ type MonitorUpdateRequest struct {
 
 	AlertContacts []MonitorRequestAlertContact
 
-	CustomHTTPHeaders  map[string]string
+	CustomHTTPHeaders map[string]string
 }
 
 func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Monitor, err error) {
