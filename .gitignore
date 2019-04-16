@@ -10,3 +10,5 @@
 *.tfvars
 
 *.log
+
+c.out
