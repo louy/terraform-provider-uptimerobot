@@ -43,6 +43,44 @@ func TestUptimeRobotDataResourceMonitor_http_monitor(t *testing.T) {
 	})
 }
 
+func TestUptimeRobotDataResourceMonitor_keyword_monitor(t *testing.T) {
+	var FriendlyName = "TF Test: keyword"
+	var Type = "keyword"
+	var URL = "https://google.com"
+	var KeywordType = "not exists"
+	var KeywordValue = "yahoo"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					keyword_type  = "%s"
+					keyword_value = "%s"
+				}
+				`, FriendlyName, Type, URL, KeywordType, KeywordValue),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "keyword_type", KeywordType),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "keyword_value", KeywordValue),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestUptimeRobotDataResourceMonitor_http_port_monitor(t *testing.T) {
 	var FriendlyName = "TF Test: http port monitor"
 	var Type = "port"
@@ -154,8 +192,8 @@ func TestUptimeRobotDataResourceMonitor_custom_alert_contact_threshold_and_recur
 				),
 			},
 			resource.TestStep{
-				ResourceName:      "uptimerobot_monitor.test",
-				ImportState:       true,
+				ResourceName: "uptimerobot_monitor.test",
+				ImportState:  true,
 				// uptimerobot doesn't support pulling alert_contact
 				// ImportStateVerify: true,
 			},
