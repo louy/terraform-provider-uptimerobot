@@ -39,6 +39,45 @@ func TestUptimeRobotDataResourceStatusPage_basic(t *testing.T) {
 	})
 }
 
+func TestUptimeRobotDataResourceStatusPage_update_name(t *testing.T) {
+	var friendlyName = "TF Test: Update name"
+	var friendlyName2 = "TF Test: Update name 2"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckStatusPageDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_status_page" "test" {
+					friendly_name = "%s"
+				}
+				`, friendlyName),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_status_page.test", "friendly_name", friendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_status_page.test", "monitors.#", "1"),
+					resource.TestCheckResourceAttr("uptimerobot_status_page.test", "monitors.0", "0"),
+				),
+			},
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_status_page" "test" {
+					friendly_name = "%s"
+				}
+				`, friendlyName2),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_status_page.test", "friendly_name", friendlyName2),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_status_page.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestUptimeRobotDataResourceStatusPage_custom_monitors(t *testing.T) {
 	var friendlyName = "TF Test: custom monitors"
 	resource.Test(t, resource.TestCase{

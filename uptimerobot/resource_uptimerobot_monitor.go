@@ -98,7 +98,7 @@ func resourceMonitor() *schema.Resource {
 			"custom_http_headers": {
 				Type:     schema.TypeMap,
 				Optional: true,
-			},	
+			},
 			// TODO - mwindows
 			// TODO - ignore_ssl_errors
 		},
