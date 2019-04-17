@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strconv"
 )
 
 // maximum pagination depth to allow (10*50=500 entries)
@@ -144,7 +145,13 @@ func (client UptimeRobotApiClient) CreateAlertContact(req AlertContactCreateRequ
 		return
 	}
 
-	return client.GetAlertContact(alertcontact["id"].(string))
+	// The alert contact ID is a string value according to API docs but is
+	// returned as a integer value by the newAlertContact API JSON. In other
+	// places the API does correctly handle it as a string value.
+	// The difference made by it being a string is that a zero prefix to the ID // number is preserved. A zero prefixed alert contact ID is thus far only
+	// been observed on the default alert contact (created at account creation).
+	// https://github.com/louy/terraform-provider-uptimerobot/pull/21
+	return client.GetAlertContact(strconv.Itoa(alertcontact["id"].(int)))
 }
 
 func (client UptimeRobotApiClient) DeleteAlertContact(id string) (err error) {
