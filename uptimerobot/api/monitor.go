@@ -178,7 +178,7 @@ func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Mo
 	}
 	acStrings := make([]string, len(req.AlertContacts))
 	for k, v := range req.AlertContacts {
-		acStrings[k] = fmt.Sprintf("%d_%d_%d", v.ID, v.Threshold, v.Recurrence)
+		acStrings[k] = fmt.Sprintf("%s_%d_%d", v.ID, v.Threshold, v.Recurrence)
 	}
 	data.Add("alert_contacts", strings.Join(acStrings, "-"))
 
@@ -251,7 +251,7 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 	}
 	acStrings := make([]string, len(req.AlertContacts))
 	for k, v := range req.AlertContacts {
-		acStrings[k] = fmt.Sprintf("%d_%d_%d", v.ID, v.Threshold, v.Recurrence)
+		acStrings[k] = fmt.Sprintf("%s_%d_%d", v.ID, v.Threshold, v.Recurrence)
 	}
 	data.Add("alert_contacts", strings.Join(acStrings, "-"))
 
