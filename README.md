@@ -29,6 +29,14 @@ resource "uptimerobot_monitor" "main" {
   }
 }
 
+resource "uptimerobot_monitor" "custom_port" {
+  url           = "doe.john.me"
+  type          = "port"
+  sub_type      = "custom"
+  port          = 5678
+  friendly_name = "Custom port"
+}
+
 resource "uptimerobot_status_page" "main" {
   friendly_name  = "My Status Page"
   custom_domain  = "status.example.com"
