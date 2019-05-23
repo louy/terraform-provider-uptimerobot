@@ -7,6 +7,9 @@ import (
 	"net/url"
 )
 
+// maximum pagination depth to allow (10*50=500 entries)
+const page_limit = 10
+
 var alertContactType = map[string]int{
 	"sms":        1,
 	"email":      2,
@@ -30,17 +33,64 @@ var alertContactStatus = map[string]int{
 var AlertContactStatus = mapKeys(alertContactStatus)
 
 type AlertContact struct {
-	ID           int    `json:"id"`
+	ID           string `json:"id"`
 	FriendlyName string `json:"friendly_name"`
 	Value        string `json:"value"`
 	Type         string
 	Status       string
 }
 
-func (client UptimeRobotApiClient) GetAlertContact(id int) (ac AlertContact, err error) {
+func (client UptimeRobotApiClient) GetAlertContacts() (acs []AlertContact, err error) {
+	data := url.Values{}
+
+	var total float64
+
+	for i := 0; i < page_limit; i++ {
+		body, err := client.MakeCall(
+			"getAlertContacts",
+			data.Encode(),
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		alertcontacts, ok := body["alert_contacts"].([]interface{})
+		if !ok {
+			j, _ := json.Marshal(body)
+			err = errors.New("Unknown response from the server: " + string(j))
+			return nil, err
+		}
+
+		for _, i := range alertcontacts {
+			alertcontact := i.(map[string]interface{})
+			id := alertcontact["id"].(string)
+			ac := AlertContact{
+				id,
+				alertcontact["friendly_name"].(string),
+				alertcontact["value"].(string),
+				intToString(alertContactType, int(alertcontact["type"].(float64))),
+				intToString(alertContactStatus, int(alertcontact["status"].(float64))),
+			}
+			acs = append(acs, ac)
+		}
+
+		total = body["total"].(float64)
+		if float64(len(acs)) == total {
+			break
+		}
+	}
+
+	if float64(len(acs)) != total {
+		err = errors.New("Hitting pagination limit of: " + string(page_limit))
+	}
+
+	return
+}
+
+func (client UptimeRobotApiClient) GetAlertContact(id string) (ac AlertContact, err error) {
 	ac.ID = id
 	data := url.Values{}
-	data.Add("alert_contacts", fmt.Sprintf("%d", id))
+	data.Add("alert_contacts", id)
 
 	body, err := client.MakeCall(
 		"getAlertContacts",
@@ -94,12 +144,18 @@ func (client UptimeRobotApiClient) CreateAlertContact(req AlertContactCreateRequ
 		return
 	}
 
-	return client.GetAlertContact(int(alertcontact["id"].(float64)))
+	// The alert contact ID is a string value according to API docs but is
+	// returned as a integer value by the newAlertContact API JSON. In other
+	// places the API does correctly handle it as a string value.
+	// The difference made by it being a string is that a zero prefix to the ID // number is preserved. A zero prefixed alert contact ID is thus far only
+	// been observed on the default alert contact (created at account creation).
+	// https://github.com/louy/terraform-provider-uptimerobot/pull/21
+	return client.GetAlertContact(fmt.Sprintf("%.0f", alertcontact["id"].(float64)))
 }
 
-func (client UptimeRobotApiClient) DeleteAlertContact(id int) (err error) {
+func (client UptimeRobotApiClient) DeleteAlertContact(id string) (err error) {
 	data := url.Values{}
-	data.Add("id", fmt.Sprintf("%d", id))
+	data.Add("id", id)
 
 	_, err = client.MakeCall(
 		"deleteAlertContact",
@@ -112,14 +168,14 @@ func (client UptimeRobotApiClient) DeleteAlertContact(id int) (err error) {
 }
 
 type AlertContactUpdateRequest struct {
-	ID           int
+	ID           string
 	FriendlyName string
 	Value        string
 }
 
 func (client UptimeRobotApiClient) UpdateAlertContact(req AlertContactUpdateRequest) (err error) {
 	data := url.Values{}
-	data.Add("id", fmt.Sprintf("%d", req.ID))
+	data.Add("id", req.ID)
 	data.Add("friendly_name", req.FriendlyName)
 	data.Add("value", req.Value)
 

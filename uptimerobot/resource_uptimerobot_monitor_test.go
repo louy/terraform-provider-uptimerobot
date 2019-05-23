@@ -421,6 +421,51 @@ func TestUptimeRobotDataResourceMonitor_http_auth_monitor(t *testing.T) {
 	})
 }
 
+func TestUptimeRobotDataResourceMonitor_default_alert_contact(t *testing.T) {
+	var FriendlyName = "TF Test: using the default alert contact"
+	var Type = "http"
+	var URL = "https://google.com"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+
+				data "uptimerobot_account" "account" {}
+
+				data "uptimerobot_alert_contact" "default" {
+				friendly_name = "${data.uptimerobot_account.account.email}"
+				}
+
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					alert_contact {
+						id         = "${data.uptimerobot_alert_contact.default.id}"
+					}
+				}
+				`, FriendlyName, Type, URL),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "alert_contact.#", "1"),
+					resource.TestCheckResourceAttrSet("uptimerobot_monitor.test", "alert_contact.0.id"),
+				),
+			},
+			resource.TestStep{
+				ResourceName: "uptimerobot_monitor.test",
+				ImportState:  true,
+				// uptimerobot doesn't support pulling alert_contact
+				// ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccCheckMonitorDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(uptimerobotapi.UptimeRobotApiClient)
 
