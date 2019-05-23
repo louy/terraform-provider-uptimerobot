@@ -64,10 +64,15 @@ func (client UptimeRobotApiClient) GetAlertContacts() (acs []AlertContact, err e
 		for _, i := range alertcontacts {
 			alertcontact := i.(map[string]interface{})
 			id := alertcontact["id"].(string)
+			friendlyName := alertcontact["friendly_name"].(string)
+			value := ""
+			if alertcontact["value"] != nil {
+				value = alertcontact["value"].(string)
+			}
 			ac := AlertContact{
 				id,
-				alertcontact["friendly_name"].(string),
-				alertcontact["value"].(string),
+				friendlyName,
+				value,
 				intToString(alertContactType, int(alertcontact["type"].(float64))),
 				intToString(alertContactStatus, int(alertcontact["status"].(float64))),
 			}
