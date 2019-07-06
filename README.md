@@ -6,7 +6,7 @@
 ```tf
 
 provider "uptimerobot" {
-  api_key = "[YOUR MAIN API KEY]"
+  api_key = "[YOUR MAIN API KEY]" # or pass via environment variable UPTIMEROBOT_API_KEY
 }
 
 data "uptimerobot_account" "account" {}
