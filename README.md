@@ -1,4 +1,5 @@
 # Terraform UptimeRobot Provider
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 [![CircleCI](https://circleci.com/gh/louy/terraform-provider-uptimerobot.svg?style=svg)](https://circleci.com/gh/louy/terraform-provider-uptimerobot)
 
 ## Getting started
@@ -63,3 +64,19 @@ resource "aws_route53_record" {
 }
 
 ```
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<table>
+  <tr>
+    <td align="center"><a href="https://nhamlh.space"><img src="https://avatars3.githubusercontent.com/u/11173217?v=4" width="100px;" alt="Nham Le"/><br /><sub><b>Nham Le</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=nhamlh" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
