@@ -24,6 +24,17 @@
         "maintenance",
         "test"
       ]
+    },
+    {
+      "login": "drubin",
+      "name": "David Rubin",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/237513?v=4",
+      "profile": "http://blog.smartcube.co.za",
+      "contributions": [
+        "code",
+        "maintenance",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
