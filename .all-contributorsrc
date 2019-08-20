@@ -35,7 +35,8 @@
       "contributions": [
         "code",
         "maintenance",
-        "test"
+        "test",
+        "doc"
       ]
     },
     {
@@ -47,6 +48,25 @@
         "code",
         "test",
         "ideas"
+      ]
+    },
+    {
+      "login": "Novex",
+      "name": "Seb Patane",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/564860?v=4",
+      "profile": "https://twitch.tv/sebbity",
+      "contributions": [
+        "platform"
+      ]
+    },
+    {
+      "login": "leeif",
+      "name": "YIFAN LI",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/15794005?v=4",
+      "profile": "https://github.com/leeif",
+      "contributions": [
+        "code",
+        "test"
       ]
     }
   ],
