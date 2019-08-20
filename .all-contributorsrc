@@ -23,7 +23,8 @@
         "code",
         "maintenance",
         "test",
-        "doc"
+        "doc",
+        "tool"
       ]
     },
     {
