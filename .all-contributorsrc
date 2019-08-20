@@ -77,6 +77,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ad",
+      "name": "Daniel Apatin",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/35623?v=4",
+      "profile": "https://blog.apatin.ru",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
