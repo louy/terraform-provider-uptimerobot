@@ -1,5 +1,5 @@
 # Terraform UptimeRobot Provider
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
 [![CircleCI](https://circleci.com/gh/louy/terraform-provider-uptimerobot.svg?style=svg)](https://circleci.com/gh/louy/terraform-provider-uptimerobot)
 
 ## Getting started
@@ -74,6 +74,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://nhamlh.space"><img src="https://avatars3.githubusercontent.com/u/11173217?v=4" width="100px;" alt="Nham Le"/><br /><sub><b>Nham Le</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=nhamlh" title="Code">💻</a></td>
+    <td align="center"><a href="http://louy.alakkad.me"><img src="https://avatars3.githubusercontent.com/u/349850?v=4" width="100px;" alt="Louay Alakkad"/><br /><sub><b>Louay Alakkad</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=louy" title="Code">💻</a> <a href="#maintenance-louy" title="Maintenance">🚧</a> <a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=louy" title="Tests">⚠️</a></td>
   </tr>
 </table>
 
