@@ -1,5 +1,5 @@
 # Terraform UptimeRobot Provider
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors)
 [![CircleCI](https://circleci.com/gh/louy/terraform-provider-uptimerobot.svg?style=svg)](https://circleci.com/gh/louy/terraform-provider-uptimerobot)
 
 ## Getting started
@@ -80,6 +80,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://twitch.tv/sebbity"><img src="https://avatars1.githubusercontent.com/u/564860?v=4" width="100px;" alt="Seb Patane"/><br /><sub><b>Seb Patane</b></sub></a><br /><a href="#platform-Novex" title="Packaging/porting to new platform">📦</a></td>
     <td align="center"><a href="https://github.com/leeif"><img src="https://avatars1.githubusercontent.com/u/15794005?v=4" width="100px;" alt="YIFAN LI"/><br /><sub><b>YIFAN LI</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=leeif" title="Code">💻</a> <a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=leeif" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://nicolas.lamirault.xyz"><img src="https://avatars0.githubusercontent.com/u/29233?v=4" width="100px;" alt="Nicolas Lamirault"/><br /><sub><b>Nicolas Lamirault</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=nlamirault" title="Documentation">📖</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://ochrona.jawne.info.pl"><img src="https://avatars1.githubusercontent.com/u/3618479?v=4" width="100px;" alt="Adam Dobrawy"/><br /><sub><b>Adam Dobrawy</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=ad-m" title="Documentation">📖</a></td>
   </tr>
 </table>
 
