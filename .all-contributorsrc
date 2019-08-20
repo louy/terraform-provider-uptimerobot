@@ -35,6 +35,17 @@
         "maintenance",
         "test"
       ]
+    },
+    {
+      "login": "aequitas",
+      "name": "Johan Bloemberg",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/365827?v=4",
+      "profile": "https://ijohan.nl",
+      "contributions": [
+        "code",
+        "test",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
