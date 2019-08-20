@@ -97,6 +97,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "tcarrondo",
+      "name": "Tiago Carrondo",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/2323546?v=4",
+      "profile": "https://carrondo.net",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
