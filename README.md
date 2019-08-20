@@ -1,5 +1,5 @@
 # Terraform UptimeRobot Provider
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors)
 [![CircleCI](https://circleci.com/gh/louy/terraform-provider-uptimerobot.svg?style=svg)](https://circleci.com/gh/louy/terraform-provider-uptimerobot)
 
 ## Getting started
@@ -77,6 +77,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="http://louy.alakkad.me"><img src="https://avatars3.githubusercontent.com/u/349850?v=4" width="100px;" alt="Louay Alakkad"/><br /><sub><b>Louay Alakkad</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=louy" title="Code">💻</a> <a href="#maintenance-louy" title="Maintenance">🚧</a> <a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=louy" title="Tests">⚠️</a> <a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=louy" title="Documentation">📖</a></td>
     <td align="center"><a href="http://blog.smartcube.co.za"><img src="https://avatars0.githubusercontent.com/u/237513?v=4" width="100px;" alt="David Rubin"/><br /><sub><b>David Rubin</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=drubin" title="Code">💻</a> <a href="#maintenance-drubin" title="Maintenance">🚧</a> <a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=drubin" title="Tests">⚠️</a> <a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=drubin" title="Documentation">📖</a></td>
     <td align="center"><a href="https://ijohan.nl"><img src="https://avatars2.githubusercontent.com/u/365827?v=4" width="100px;" alt="Johan Bloemberg"/><br /><sub><b>Johan Bloemberg</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=aequitas" title="Code">💻</a> <a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=aequitas" title="Tests">⚠️</a> <a href="#ideas-aequitas" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://twitch.tv/sebbity"><img src="https://avatars1.githubusercontent.com/u/564860?v=4" width="100px;" alt="Seb Patane"/><br /><sub><b>Seb Patane</b></sub></a><br /><a href="#platform-Novex" title="Packaging/porting to new platform">📦</a></td>
   </tr>
 </table>
 

@@ -48,6 +48,15 @@
         "test",
         "ideas"
       ]
+    },
+    {
+      "login": "Novex",
+      "name": "Seb Patane",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/564860?v=4",
+      "profile": "https://twitch.tv/sebbity",
+      "contributions": [
+        "platform"
+      ]
     }
   ],
   "contributorsPerLine": 7,
