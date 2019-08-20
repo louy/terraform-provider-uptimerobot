@@ -1,5 +1,5 @@
 # Terraform UptimeRobot Provider
-[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors)
 [![CircleCI](https://circleci.com/gh/louy/terraform-provider-uptimerobot.svg?style=svg)](https://circleci.com/gh/louy/terraform-provider-uptimerobot)
 
 ## Getting started
@@ -83,6 +83,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="http://ochrona.jawne.info.pl"><img src="https://avatars1.githubusercontent.com/u/3618479?v=4" width="100px;" alt="Adam Dobrawy"/><br /><sub><b>Adam Dobrawy</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=ad-m" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://fewbar.com/"><img src="https://avatars2.githubusercontent.com/u/470880?v=4" width="100px;" alt="Clint Byrum"/><br /><sub><b>Clint Byrum</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/issues?q=author%3ASpamapS" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 

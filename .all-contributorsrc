@@ -86,6 +86,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "SpamapS",
+      "name": "Clint Byrum",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/470880?v=4",
+      "profile": "http://fewbar.com/",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
