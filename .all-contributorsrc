@@ -1,0 +1,23 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "nhamlh",
+      "name": "Nham Le",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/11173217?v=4",
+      "profile": "https://nhamlh.space",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "terraform-provider-uptimerobot",
+  "projectOwner": "louy",
+  "repoType": "github",
+  "repoHost": "https://github.com"
+}
