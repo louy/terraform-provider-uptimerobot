@@ -52,9 +52,8 @@ resource "uptimerobot_status_page" "main" {
   friendly_name  = "My Status Page"
   custom_domain  = "status.example.com"
   password       = "WeAreAwsome"
-  sort_monitors  = "down-up-paused"
+  sort           = "down-up-paused"
   monitors       = ["${uptimerobot_monitor.main.id}"]
-  hide_url_links = false # pro only
 }
 
 resource "aws_route53_record" {
