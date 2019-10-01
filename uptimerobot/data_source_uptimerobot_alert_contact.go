@@ -3,7 +3,7 @@ package uptimerobot
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	uptimerobotapi "github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
