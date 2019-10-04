@@ -1,4 +1,4 @@
-# Unreleased
+# v0.4.1
 - Switch to [terraform plugin sdk](https://www.terraform.io/docs/extend/plugin-sdk.html) ([#60](https://github.com/louy/terraform-provider-uptimerobot/pull/60) by [@nlamirault](https://github.com/nlamirault))
 
 # v0.4.0
