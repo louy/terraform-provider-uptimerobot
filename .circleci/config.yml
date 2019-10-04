@@ -3,7 +3,7 @@ jobs:
   build:
     environment:
       CC_TEST_REPORTER_ID: 52729bbe50d1d3f27774761a3ae11ce34b3a14fbbdfdce903f8736eac52f30c5
-      GO111MODULE: on
+      GO111MODULE: 'on'
 
     docker:
       # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/

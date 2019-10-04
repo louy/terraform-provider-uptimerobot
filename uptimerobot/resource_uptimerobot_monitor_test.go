@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
+	uptimerobotapi "github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 func TestUptimeRobotDataResourceMonitor_http_monitor(t *testing.T) {
@@ -273,7 +273,7 @@ func TestUptimeRobotDataResourceMonitor_custom_http_headers(t *testing.T) {
 					friendly_name = "%s"
 					type          = "%s"
 					url           = "%s"
-					custom_http_headers {
+					custom_http_headers = {
 						// Accept-Language = "en"
 					}
 				}
