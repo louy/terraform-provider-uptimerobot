@@ -3,10 +3,11 @@ jobs:
   build:
     environment:
       CC_TEST_REPORTER_ID: 52729bbe50d1d3f27774761a3ae11ce34b3a14fbbdfdce903f8736eac52f30c5
+      GO111MODULE: on
 
     docker:
       # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
-      - image: circleci/golang:1.10
+      - image: circleci/golang:1.12
 
     working_directory: /go/src/github.com/louy/terraform-provider-uptimerobot
 
@@ -15,12 +16,13 @@ jobs:
 
       - restore_cache:
           keys:
-            - vendor-dep-{{ checksum "Gopkg.lock" }}
+            - vendor-dep-{{ checksum "go.sum" }}
 
-      - run: dep ensure -vendor-only -v
+      - run: go mod tidy -v
+      - run: go mod vendor
 
       - save_cache:
-          key: vendor-dep-{{ checksum "Gopkg.lock" }}
+          key: vendor-dep-{{ checksum "go.sum" }}
           paths:
             - ./vendor
 
