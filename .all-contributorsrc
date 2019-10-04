@@ -136,6 +136,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "bd0zer",
+      "name": "bd0zer",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/32301353?v=4",
+      "profile": "https://github.com/bd0zer",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
