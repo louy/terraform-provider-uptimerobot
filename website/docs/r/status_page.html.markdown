@@ -19,7 +19,6 @@ resource "uptimerobot_status_page" "my_status_page" {
   password       = "WeAreAwsome"
   sort_monitors  = "down-up-paused"
   monitors       = ["${resource.uptimerobot_monitor.main.id}"]
-  hide_url_links = true # pro only
 }
 ```
 
@@ -35,7 +34,6 @@ resource "uptimerobot_status_page" "my_status_page" {
   - `up-down-paused`
   - `down-up-paused`
 * `status` - the status of the status page (`paused` or `active`). Defaults to `active`
-<!-- * `hide_url_links` - (optional) for hiding the Uptime Robot links and only available in the Pro Plan -->
 
 ## Attributes Reference
 
