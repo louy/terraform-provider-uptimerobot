@@ -1,5 +1,5 @@
 # Terraform UptimeRobot Provider
-[![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors)
 [![CircleCI](https://circleci.com/gh/louy/terraform-provider-uptimerobot.svg?style=svg)](https://circleci.com/gh/louy/terraform-provider-uptimerobot)
 
 ## Getting started
@@ -85,6 +85,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="http://fewbar.com/"><img src="https://avatars2.githubusercontent.com/u/470880?v=4" width="100px;" alt="Clint Byrum"/><br /><sub><b>Clint Byrum</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/issues?q=author%3ASpamapS" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://carrondo.net"><img src="https://avatars1.githubusercontent.com/u/2323546?v=4" width="100px;" alt="Tiago Carrondo"/><br /><sub><b>Tiago Carrondo</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/issues?q=author%3Atcarrondo" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/bpjbauch"><img src="https://avatars1.githubusercontent.com/u/13983135?v=4" width="100px;" alt="JB"/><br /><sub><b>JB</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/issues?q=author%3Abpjbauch" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/both"><img src="https://avatars2.githubusercontent.com/u/5071455?v=4" width="100px;" alt="both"/><br /><sub><b>both</b></sub></a><br /><a href="https://github.com/louy/terraform-provider-uptimerobot/commits?author=both" title="Code">💻</a></td>
   </tr>
 </table>
 
