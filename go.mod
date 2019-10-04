@@ -2,4 +2,4 @@ module github.com/louy/terraform-provider-uptimerobot
 
 go 1.12
 
-require github.com/hashicorp/terraform v0.12.7
+require github.com/hashicorp/terraform-plugin-sdk v1.0.0

@@ -1,3 +1,6 @@
+# Unreleased
+- Switch to [terraform plugin sdk](https://www.terraform.io/docs/extend/plugin-sdk.html) ([#60](https://github.com/louy/terraform-provider-uptimerobot/pull/60) by [@nlamirault](https://github.com/nlamirault))
+
 # v0.4.0
 - BREAKING: Terraform 0.12 support ([#58](https://github.com/louy/terraform-provider-uptimerobot/pull/58) by [@caarlos0](https://github.com/caarlos0), [#59](https://github.com/louy/terraform-provider-uptimerobot/pull/59) by [@aequitas](https://github.com/aequitas))
 

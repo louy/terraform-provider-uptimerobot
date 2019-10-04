@@ -3,8 +3,8 @@ package uptimerobot
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/helper/schema"
-	uptimerobotapi "github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 func dataSourceAlertContact() *schema.Resource {
