@@ -1,3 +1,6 @@
+# v0.4.0
+- BREAKING: Terraform 0.12 support ([#58](https://github.com/louy/terraform-provider-uptimerobot/pull/58) by [@caarlos0](https://github.com/caarlos0), [#59](https://github.com/louy/terraform-provider-uptimerobot/pull/59) by [@aequitas](https://github.com/aequitas))
+
 # v0.3.2
 - data source alert_contact: Allow default alert contact to be configured ([#21](https://github.com/louy/terraform-provider-uptimerobot/pull/21) by [@aequitas](https://github.com/aequitas))
 - resource monitor: Handle nil value in alert contact ([#28](https://github.com/louy/terraform-provider-uptimerobot/pull/28) by [@louy](https://github.com/louy))
