@@ -6,15 +6,6 @@
   "commit": false,
   "contributors": [
     {
-      "login": "nhamlh",
-      "name": "Nham Le",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/11173217?v=4",
-      "profile": "https://nhamlh.space",
-      "contributions": [
-        "code"
-      ]
-    },
-    {
       "login": "louy",
       "name": "Louay Alakkad",
       "avatar_url": "https://avatars3.githubusercontent.com/u/349850?v=4",
@@ -25,6 +16,15 @@
         "test",
         "doc",
         "tool"
+      ]
+    },
+    {
+      "login": "nhamlh",
+      "name": "Nham Le",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/11173217?v=4",
+      "profile": "https://nhamlh.space",
+      "contributions": [
+        "code"
       ]
     },
     {
@@ -143,6 +143,16 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/32301353?v=4",
       "profile": "https://github.com/bd0zer",
       "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "randrusiak",
+      "name": "randrusiak",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/29524175?v=4",
+      "profile": "https://github.com/randrusiak",
+      "contributions": [
+        "code",
         "bug"
       ]
     }
