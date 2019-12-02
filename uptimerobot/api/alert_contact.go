@@ -18,7 +18,7 @@ var alertContactType = map[string]int{
 	"webhook":    5,
 	"pushbullet": 6,
 	"zapier":     7,
-	"pushover":   8,
+	"pushover":   9,
 	"hipchat":    10,
 	"slack":      11,
 }
