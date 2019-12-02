@@ -1,3 +1,6 @@
+# v0.4.2
+- Fix bug in pushover alert contact type ([#66](https://github.com/louy/terraform-provider-uptimerobot/pull/66) by [@randrusiak](https://github.com/randrusiak))
+
 # v0.4.1
 - Switch to [terraform plugin sdk](https://www.terraform.io/docs/extend/plugin-sdk.html) ([#60](https://github.com/louy/terraform-provider-uptimerobot/pull/60) by [@nlamirault](https://github.com/nlamirault))
 
