@@ -1,3 +1,6 @@
+# v0.4.3
+- resource monitor: fix update suppport for `recurrence` and `threshold` in `alert_contact` ([#67](https://github.com/louy/terraform-provider-uptimerobot/pull/67) by [@drubin](https://github.com/drubin))
+
 # v0.4.2
 - Fix bug in pushover alert contact type ([#66](https://github.com/louy/terraform-provider-uptimerobot/pull/66) by [@randrusiak](https://github.com/randrusiak))
 
