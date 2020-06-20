@@ -32,3 +32,9 @@ func testAccPreCheck(t *testing.T) {
 		t.Fatal("UPTIMEROBOT_API_KEY must be set for acceptance tests")
 	}
 }
+
+func testProAccPreCheck(t *testing.T) {
+	if v := os.Getenv("UPTIMEROBOT_PRO"); v == "" {
+		t.Fatal("UPTIMEROBOT_PRO must be set to true for pro features acceptance tests")
+	}
+}

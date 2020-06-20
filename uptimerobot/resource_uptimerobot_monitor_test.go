@@ -484,6 +484,41 @@ func TestUptimeRobotDataResourceMonitor_http_auth_monitor(t *testing.T) {
 	})
 }
 
+func TestUptimeRobotDataResourceMonitor_http_method(t *testing.T) {
+	var FriendlyName = "TF Test: http method monitor"
+	var Type = "http"
+	var Method = "HEAD"
+	var URL = "https://google.com"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t); testProAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					http_method   = "%s"
+				}
+				`, FriendlyName, Type, URL, Method),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "http_method", Method),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func TestUptimeRobotDataResourceMonitor_default_alert_contact(t *testing.T) {
 	var FriendlyName = "TF Test: using the default alert contact"
 	var Type = "http"

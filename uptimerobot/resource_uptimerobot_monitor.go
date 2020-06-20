@@ -62,6 +62,11 @@ func resourceMonitor() *schema.Resource {
 				Optional: true,
 				Default:  300,
 			},
+			"http_method": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.MonitorHTTPMethod, false),
+			},
 			"http_username": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -130,12 +135,13 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 	case "keyword":
 		req.KeywordType = d.Get("keyword_type").(string)
 		req.KeywordValue = d.Get("keyword_value").(string)
-
+		req.HTTPMethod = d.Get("http_method").(string)
 		req.HTTPUsername = d.Get("http_username").(string)
 		req.HTTPPassword = d.Get("http_password").(string)
 		req.HTTPAuthType = d.Get("http_auth_type").(string)
 		break
 	case "http":
+		req.HTTPMethod = d.Get("http_method").(string)
 		req.HTTPUsername = d.Get("http_username").(string)
 		req.HTTPPassword = d.Get("http_password").(string)
 		req.HTTPAuthType = d.Get("http_auth_type").(string)
@@ -212,11 +218,15 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 		req.KeywordType = d.Get("keyword_type").(string)
 		req.KeywordValue = d.Get("keyword_value").(string)
 
+		req.HTTPMethod = d.Get("http_method").(string)
+
 		req.HTTPUsername = d.Get("http_username").(string)
 		req.HTTPPassword = d.Get("http_password").(string)
 		req.HTTPAuthType = d.Get("http_auth_type").(string)
 		break
 	case "http":
+		req.HTTPMethod = d.Get("http_method").(string)
+
 		req.HTTPUsername = d.Get("http_username").(string)
 		req.HTTPPassword = d.Get("http_password").(string)
 		req.HTTPAuthType = d.Get("http_auth_type").(string)
@@ -281,6 +291,8 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) err
 
 	d.Set("keyword_type", m.KeywordType)
 	d.Set("keyword_value", m.KeywordValue)
+
+	d.Set("http_method", m.HTTPMethod)
 
 	d.Set("http_username", m.HTTPUsername)
 	d.Set("http_password", m.HTTPPassword)
