@@ -41,6 +41,12 @@ var monitorKeywordType = map[string]int{
 }
 var MonitorKeywordType = mapKeys(monitorKeywordType)
 
+var monitorHTTPAuthType = map[string]int{
+	"basic":  1,
+	"digest": 2,
+}
+var MonitorHTTPAuthType = mapKeys(monitorHTTPAuthType)
+
 type Monitor struct {
 	ID           int    `json:"id"`
 	FriendlyName string `json:"friendly_name"`
@@ -57,6 +63,7 @@ type Monitor struct {
 
 	HTTPUsername string `json:"http_username"`
 	HTTPPassword string `json:"http_password"`
+	HTTPAuthType string `json:"http_auth_type"`
 
 	CustomHTTPHeaders map[string]string
 }
@@ -112,10 +119,12 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 
 		m.HTTPUsername = monitor["http_username"].(string)
 		m.HTTPPassword = monitor["http_password"].(string)
+		m.HTTPAuthType = intToString(monitorHTTPAuthType, int(monitor["http_auth_type"].(float64)))
 		break
 	case "http":
 		m.HTTPUsername = monitor["http_username"].(string)
 		m.HTTPPassword = monitor["http_password"].(string)
+		m.HTTPAuthType = intToString(monitorHTTPAuthType, int(monitor["http_auth_type"].(float64)))
 		break
 	}
 
@@ -147,6 +156,7 @@ type MonitorCreateRequest struct {
 
 	HTTPUsername string
 	HTTPPassword string
+	HTTPAuthType string
 
 	AlertContacts []MonitorRequestAlertContact
 
@@ -170,10 +180,12 @@ func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Mo
 
 		data.Add("http_username", req.HTTPUsername)
 		data.Add("http_password", req.HTTPPassword)
+		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
 		break
 	case "http":
 		data.Add("http_username", req.HTTPUsername)
 		data.Add("http_password", req.HTTPPassword)
+		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
 		break
 	}
 	acStrings := make([]string, len(req.AlertContacts))
@@ -219,6 +231,7 @@ type MonitorUpdateRequest struct {
 
 	HTTPUsername string
 	HTTPPassword string
+	HTTPAuthType string
 
 	AlertContacts []MonitorRequestAlertContact
 
@@ -243,10 +256,12 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 
 		data.Add("http_username", req.HTTPUsername)
 		data.Add("http_password", req.HTTPPassword)
+		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
 		break
 	case "http":
 		data.Add("http_username", req.HTTPUsername)
 		data.Add("http_password", req.HTTPPassword)
+		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
 		break
 	}
 	acStrings := make([]string, len(req.AlertContacts))

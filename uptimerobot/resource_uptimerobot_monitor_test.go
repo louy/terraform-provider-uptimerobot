@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
+	uptimerobotapi "github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 func TestUptimeRobotDataResourceMonitor_http_monitor(t *testing.T) {
@@ -388,6 +388,8 @@ func TestUptimeRobotDataResourceMonitor_http_auth_monitor(t *testing.T) {
 	var Type = "http"
 	var Username = "tester"
 	var Password = "secret"
+	var AuthType = "basic"
+	var AuthType2 = "digest"
 	var URL = fmt.Sprintf("https://httpbin.org/basic-auth/%s/%s", Username, Password)
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -397,19 +399,54 @@ func TestUptimeRobotDataResourceMonitor_http_auth_monitor(t *testing.T) {
 			resource.TestStep{
 				Config: fmt.Sprintf(`
 				resource "uptimerobot_monitor" "test" {
-					friendly_name = "%s"
-					type          = "%s"
-					url           = "%s"
-					http_username = "%s"
-					http_password = "%s"
+					friendly_name  = "%s"
+					type           = "%s"
+					url            = "%s"
+					http_username  = "%s"
+					http_password  = "%s"
+					http_auth_type = "%s"
 				}
-				`, FriendlyName, Type, URL, Username, Password),
+				`, FriendlyName, Type, URL, Username, Password, AuthType),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "http_username", Username),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "http_password", Password),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "http_auth_type", AuthType),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name  = "%s"
+					type           = "%s"
+					url            = "%s"
+					http_username  = "%s"
+					http_password  = "%s"
+					http_auth_type = "%s"
+				}
+				`, FriendlyName, Type, URL, Username, Password, AuthType2),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "http_username", Username),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "http_password", Password),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "http_auth_type", AuthType2),
 				),
 			},
 			resource.TestStep{

@@ -42,8 +42,11 @@ resource "uptimerobot_monitor" "my_website" {
       - `imap`
       - `custom`
     - `port` - the port monitored (only if subtype is `custom`)
-* `http_username` - used for password-protected web pages (HTTP Basic Auth). Available for HTTP and keyword monitoring.
-* `http_password` - used for password-protected web pages (HTTP Basic Auth). Available for HTTP and keyword monitoring.
+* `http_username` - used for password-protected web pages (HTTP basic or digest). Available for HTTP and keyword monitoring.
+* `http_password` - used for password-protected web pages (HTTP basic or digest). Available for HTTP and keyword monitoring.
+* `http_auth_type` - Used for password-protected web pages (HTTP basic or digest). Available for HTTP and keyword monitoring. Can be one of the following:
+  - `basic`
+  - `digest`
 * `interval` - the interval for the monitoring check (300 seconds by default).
 
 ## Attributes Reference
