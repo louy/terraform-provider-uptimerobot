@@ -13,6 +13,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      GO111MODULE: "on"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -22,24 +24,19 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.12
-      
       - name: Cache
         uses: actions/cache@v2.1.1
         with:
           path: ./vendor
           key: ${{ runner.os }}-${{ hashFiles('go.sum') }}
-
       - name: Setup Code Climate test-reporter
         run: |
           # download test reporter as a static binary
           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
           chmod +x ./cc-test-reporter
-
       - name: Build
         run: |
           go build -v
-        envs:
-          GO111MODULE: 'on'
       - name: Run acceptance tests
         run: |
           ./cc-test-reporter before-build
