@@ -487,10 +487,9 @@ func TestUptimeRobotDataResourceMonitor_default_alert_contact(t *testing.T) {
 				),
 			},
 			resource.TestStep{
-				ResourceName: "uptimerobot_monitor.test",
-				ImportState:  true,
-				// uptimerobot doesn't support pulling alert_contact
-				// ImportStateVerify: true,
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
