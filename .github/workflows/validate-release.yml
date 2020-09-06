@@ -28,7 +28,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Create a terraform setup file
         run: |
-          cat << EOF > test.tf
+          echo << EOF > test.tf
           terraform {
             required_providers {
               uptimerobot = {
