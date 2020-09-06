@@ -41,3 +41,7 @@ jobs:
           ./cc-test-reporter after-build --exit-code $?
         env:
           CC_TEST_REPORTER_ID: 52729bbe50d1d3f27774761a3ae11ce34b3a14fbbdfdce903f8736eac52f30c5
+      - uses: actions/upload-artifact@v2
+        with:
+          name: terraform-provider-uptimerobot
+          path: /go/bin/terraform-provider-uptimerobot
