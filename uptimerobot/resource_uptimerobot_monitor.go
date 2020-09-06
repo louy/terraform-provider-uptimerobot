@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
+	uptimerobotapi "github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 func resourceMonitor() *schema.Resource {
@@ -70,6 +70,11 @@ func resourceMonitor() *schema.Resource {
 				Optional:  true,
 				Sensitive: true,
 			},
+			"http_auth_type": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.MonitorHTTPAuthType, false),
+			},
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -123,10 +128,12 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 
 		req.HTTPUsername = d.Get("http_username").(string)
 		req.HTTPPassword = d.Get("http_password").(string)
+		req.HTTPAuthType = d.Get("http_auth_type").(string)
 		break
 	case "http":
 		req.HTTPUsername = d.Get("http_username").(string)
 		req.HTTPPassword = d.Get("http_password").(string)
+		req.HTTPAuthType = d.Get("http_auth_type").(string)
 		break
 	}
 
@@ -198,10 +205,12 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 
 		req.HTTPUsername = d.Get("http_username").(string)
 		req.HTTPPassword = d.Get("http_password").(string)
+		req.HTTPAuthType = d.Get("http_auth_type").(string)
 		break
 	case "http":
 		req.HTTPUsername = d.Get("http_username").(string)
 		req.HTTPPassword = d.Get("http_password").(string)
+		req.HTTPAuthType = d.Get("http_auth_type").(string)
 		break
 	}
 
@@ -261,6 +270,8 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) {
 
 	d.Set("http_username", m.HTTPUsername)
 	d.Set("http_password", m.HTTPPassword)
+	// PS: There seems to be a bug in the UR api as it never returns this value
+	// d.Set("http_auth_type", m.HTTPAuthType)
 
 	d.Set("custom_http_headers", m.CustomHTTPHeaders)
 }
