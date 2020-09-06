@@ -5,7 +5,17 @@
 
 ## Getting started
 
+To install this provider, check out the installation instructions on [Terraform's registry page](https://registry.terraform.io/providers/louy/uptimerobot/latest).
+
 ```tf
+terraform {
+  required_providers {
+    uptimerobot = {
+      source = "louy/uptimerobot"
+      version = "0.5.0"
+    }
+  }
+}
 
 provider "uptimerobot" {
   api_key = "[YOUR MAIN API KEY]" # or pass via environment variable UPTIMEROBOT_API_KEY
