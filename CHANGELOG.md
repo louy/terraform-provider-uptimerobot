@@ -1,4 +1,5 @@
 # Unreleased
+- resource monitor: support for importing `alert_contact` field ([#77](https://github.com/louy/terraform-provider-uptimerobot/pull/77) by [@louy](https://github.com/louy))
 - resource monitor: support for `http_auth_type` ([#75](https://github.com/louy/terraform-provider-uptimerobot/pull/75) by [@jasonrogena](https://github.com/jasonrogena))
 
 # v0.4.3
