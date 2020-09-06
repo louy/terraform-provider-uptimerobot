@@ -1,15 +1,11 @@
 name: test
 on:
   push:
-    branches:
-      - "*"
-    tags:
-      - "*"
-    paths:
-      - uptimerobot/*
-      - go.sum
-      - go.mod
-      - main.go
+    paths-ignore:
+      - "website/**"
+      - "*.md"
+      - "LICENSE"
+      - ".all-contributorsrc"
 jobs:
   test:
     runs-on: ubuntu-latest
