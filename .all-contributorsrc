@@ -155,6 +155,16 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "jasonrogena",
+      "name": "Jason Rogena",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/2384176?v=4",
+      "profile": "https://keybase.io/jasonrogena",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
