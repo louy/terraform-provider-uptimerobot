@@ -29,16 +29,16 @@ jobs:
       - name: Setup Code Climate test-reporter
         run: |
           # download test reporter as a static binary
-          # curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          # chmod +x ./cc-test-reporter
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
       - name: Build
         run: |
           go build -v
       - name: Run acceptance tests
         run: |
-          # ./cc-test-reporter before-build
+          ./cc-test-reporter before-build
           TF_ACC=1 go test -coverprofile c.out -v ./...
-          # ./cc-test-reporter after-build --exit-code $?
+          ./cc-test-reporter after-build --exit-code $? --prefix github.com/${GITHUB_REPOSITORY}/
         env:
           CC_TEST_REPORTER_ID: 52729bbe50d1d3f27774761a3ae11ce34b3a14fbbdfdce903f8736eac52f30c5
       - uses: actions/upload-artifact@v2
