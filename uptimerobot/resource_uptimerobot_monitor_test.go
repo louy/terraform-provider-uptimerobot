@@ -249,10 +249,9 @@ func TestUptimeRobotDataResourceMonitor_custom_alert_contact_threshold_and_recur
 				),
 			},
 			resource.TestStep{
-				ResourceName: "uptimerobot_monitor.test",
-				ImportState:  true,
-				// uptimerobot doesn't support pulling alert_contact
-				// ImportStateVerify: true,
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -417,8 +416,8 @@ func TestUptimeRobotDataResourceMonitor_http_auth_monitor(t *testing.T) {
 				),
 			},
 			resource.TestStep{
-				ResourceName:      "uptimerobot_monitor.test",
-				ImportState:       true,
+				ResourceName: "uptimerobot_monitor.test",
+				ImportState:  true,
 				// NB: Disabled due to http_auth_type issue
 				// ImportStateVerify: true,
 			},
@@ -443,8 +442,8 @@ func TestUptimeRobotDataResourceMonitor_http_auth_monitor(t *testing.T) {
 				),
 			},
 			resource.TestStep{
-				ResourceName:      "uptimerobot_monitor.test",
-				ImportState:       true,
+				ResourceName: "uptimerobot_monitor.test",
+				ImportState:  true,
 				// NB: Disabled due to http_auth_type issue
 				// ImportStateVerify: true,
 			},

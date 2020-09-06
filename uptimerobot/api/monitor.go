@@ -47,6 +47,12 @@ var monitorHTTPAuthType = map[string]int{
 }
 var MonitorHTTPAuthType = mapKeys(monitorHTTPAuthType)
 
+type MonitorAlertContact struct {
+	ID         string `json:"id"`
+	Recurrence int    `json:"recurrence"`
+	Threshold  int    `json:"threshold"`
+}
+
 type Monitor struct {
 	ID           int    `json:"id"`
 	FriendlyName string `json:"friendly_name"`
@@ -66,12 +72,15 @@ type Monitor struct {
 	HTTPAuthType string `json:"http_auth_type"`
 
 	CustomHTTPHeaders map[string]string
+
+	AlertContacts []MonitorAlertContact
 }
 
 func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 	data := url.Values{}
 	data.Add("monitors", fmt.Sprintf("%d", id))
 	data.Add("custom_http_headers", fmt.Sprintf("%d", 1))
+	data.Add("alert_contacts", fmt.Sprintf("%d", 1))
 
 	body, err := client.MakeCall(
 		"getMonitors",
@@ -138,6 +147,18 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 		customHTTPHeaders[k] = v.(string)
 	}
 	m.CustomHTTPHeaders = customHTTPHeaders
+
+	if contacts := monitor["alert_contacts"].([]interface{}); contacts != nil {
+		m.AlertContacts = make([]MonitorAlertContact, len(contacts))
+		for k, v := range contacts {
+			contact := v.(map[string]interface{})
+			var ac MonitorAlertContact
+			ac.ID = contact["id"].(string)
+			ac.Recurrence = int(contact["recurrence"].(float64))
+			ac.Threshold = int(contact["threshold"].(float64))
+			m.AlertContacts[k] = ac
+		}
+	}
 
 	return
 }
