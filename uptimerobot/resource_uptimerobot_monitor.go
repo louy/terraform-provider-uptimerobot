@@ -161,7 +161,9 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 	d.SetId(fmt.Sprintf("%d", monitor.ID))
-	updateMonitorResource(d, monitor)
+	if err := updateMonitorResource(d, monitor); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -175,9 +177,9 @@ func resourceMonitorRead(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-
-	updateMonitorResource(d, monitor)
-
+	if err := updateMonitorResource(d, monitor); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -237,8 +239,9 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-
-	updateMonitorResource(d, monitor)
+	if err := updateMonitorResource(d, monitor); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -255,7 +258,7 @@ func resourceMonitorDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) {
+func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) error {
 	d.Set("friendly_name", m.FriendlyName)
 	d.Set("url", m.URL)
 	d.Set("type", m.Type)
@@ -273,5 +276,21 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) {
 	// PS: There seems to be a bug in the UR api as it never returns this value
 	// d.Set("http_auth_type", m.HTTPAuthType)
 
-	d.Set("custom_http_headers", m.CustomHTTPHeaders)
+	if err := d.Set("custom_http_headers", m.CustomHTTPHeaders); err != nil {
+		return fmt.Errorf("error setting custom_http_headers for resource %s: %s", d.Id(), err)
+	}
+
+	rawContacts := make([]map[string]interface{}, len(m.AlertContacts))
+	for k, v := range m.AlertContacts {
+		rawContacts[k] = map[string]interface{}{
+			"id":         v.ID,
+			"recurrence": v.Recurrence,
+			"threshold":  v.Threshold,
+		}
+	}
+	if err := d.Set("alert_contact", rawContacts); err != nil {
+		return fmt.Errorf("error setting alert_contact for resource %s: %s", d.Id(), err)
+	}
+
+	return nil
 }
