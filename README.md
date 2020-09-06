@@ -1,6 +1,7 @@
 # Terraform UptimeRobot Provider
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-14-orange.svg?style=flat-square)](#contributors-)
-[![CircleCI](https://circleci.com/gh/louy/terraform-provider-uptimerobot.svg?style=svg)](https://circleci.com/gh/louy/terraform-provider-uptimerobot)
+[![Build Status](https://github.com/louy/terraform-provider-uptimerobot/workflows/test/badge.svg)](https://github.com/louy/terraform-provider-uptimerobot/actions?query=workflow%3Atest)
 
 ## Getting started
 
@@ -98,6 +99,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
