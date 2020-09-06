@@ -1,3 +1,6 @@
+# Unreleased
+- resource monitor: support for `http_auth_type` ([#75](https://github.com/louy/terraform-provider-uptimerobot/pull/75) by [@jasonrogena](https://github.com/jasonrogena))
+
 # v0.4.3
 - resource monitor: fix update suppport for `recurrence` and `threshold` in `alert_contact` ([#67](https://github.com/louy/terraform-provider-uptimerobot/pull/67) by [@drubin](https://github.com/drubin))
 
