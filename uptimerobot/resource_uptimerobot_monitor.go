@@ -270,7 +270,8 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) {
 
 	d.Set("http_username", m.HTTPUsername)
 	d.Set("http_password", m.HTTPPassword)
-	d.Set("http_auth_type", m.HTTPAuthType)
+	// PS: There seems to be a bug in the UR api as it never returns this value
+	// d.Set("http_auth_type", m.HTTPAuthType)
 
 	d.Set("custom_http_headers", m.CustomHTTPHeaders)
 }

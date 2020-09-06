@@ -421,14 +421,6 @@ func TestUptimeRobotDataResourceMonitor_http_auth_monitor(t *testing.T) {
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
-		},
-	})
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testAccCheckMonitorDestroy,
-		Steps: []resource.TestStep{
 			resource.TestStep{
 				Config: fmt.Sprintf(`
 				resource "uptimerobot_monitor" "test" {
