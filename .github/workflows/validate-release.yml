@@ -28,7 +28,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Create a terraform setup file
         run: |
-          cat <<<EOF > provider.tf
+          cat << EOF > test.tf
           terraform {
             required_providers {
               uptimerobot = {
@@ -38,9 +38,7 @@ jobs:
             }
             required_version = ">= 0.13"
           }
-          EOF
-          
-          cat <<<EOF > test.tf
+
           data uptimerobot_account default {}
           EOF
       
