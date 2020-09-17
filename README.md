@@ -12,7 +12,7 @@ terraform {
   required_providers {
     uptimerobot = {
       source = "louy/uptimerobot"
-      version = "0.5.0"
+      version = "0.5.1"
     }
   }
 }
