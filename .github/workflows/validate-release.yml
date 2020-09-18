@@ -15,7 +15,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: terraform
     env:
       UPTIMEROBOT_API_KEY: ${{ secrets.UPTIMEROBOT_API_KEY }}
 
@@ -28,7 +27,8 @@ jobs:
       # Runs a single command using the runners shell
       - name: Create a terraform setup file
         run: |
-          echo << EOF > test.tf
+          mkidir test
+          cat << EOF > test/test.tf
           terraform {
             required_providers {
               uptimerobot = {
@@ -44,6 +44,8 @@ jobs:
       
       - name: Terraform Init
         run: terraform init
+        working-directory: test
 
       - name: Terraform Plan
         run: terraform plan
+        working-directory: test
