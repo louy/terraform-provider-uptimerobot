@@ -27,7 +27,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Create a terraform setup file
         run: |
-          mkidir test
+          mkdir test
           cat << EOF > test/test.tf
           terraform {
             required_providers {
