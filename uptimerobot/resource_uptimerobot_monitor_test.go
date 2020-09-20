@@ -232,7 +232,7 @@ func TestUptimeRobotDataResourceMonitor_custom_alert_contact_threshold_and_recur
 					type          = "%s"
 					url           = "%s"
 					alert_contact {
-						id         = "${uptimerobot_alert_contact.test.id}"
+						id         = uptimerobot_alert_contact.test.id
 						threshold  = 0
 						recurrence = 0
 					}
@@ -466,7 +466,7 @@ func TestUptimeRobotDataResourceMonitor_default_alert_contact(t *testing.T) {
 				data "uptimerobot_account" "account" {}
 
 				data "uptimerobot_alert_contact" "default" {
-				friendly_name = "${data.uptimerobot_account.account.email}"
+				friendly_name = data.uptimerobot_account.account.email
 				}
 
 				resource "uptimerobot_monitor" "test" {
@@ -474,7 +474,7 @@ func TestUptimeRobotDataResourceMonitor_default_alert_contact(t *testing.T) {
 					type          = "%s"
 					url           = "%s"
 					alert_contact {
-						id         = "${data.uptimerobot_alert_contact.default.id}"
+						id         = data.uptimerobot_alert_contact.default.id
 					}
 				}
 				`, FriendlyName, Type, URL),
