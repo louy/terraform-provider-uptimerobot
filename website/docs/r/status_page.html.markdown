@@ -18,7 +18,7 @@ resource "uptimerobot_status_page" "my_status_page" {
   custom_domain  = "status.example.com"
   password       = "WeAreAwsome"
   sort_monitors  = "down-up-paused"
-  monitors       = ["${resource.uptimerobot_monitor.main.id}"]
+  monitors       = [uptimerobot_monitor.main.id]
 }
 ```
 

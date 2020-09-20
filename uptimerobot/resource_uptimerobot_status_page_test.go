@@ -94,7 +94,7 @@ func TestUptimeRobotDataResourceStatusPage_custom_monitors(t *testing.T) {
 				}
 				resource "uptimerobot_status_page" "test" {
 					friendly_name = "%s"
-					monitors      = ["${uptimerobot_monitor.test.id}"]
+					monitors      = [uptimerobot_monitor.test.id]
 				}
 				`, friendlyName),
 				Check: resource.ComposeTestCheckFunc(
