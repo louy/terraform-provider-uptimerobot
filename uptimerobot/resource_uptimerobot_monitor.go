@@ -104,6 +104,28 @@ func resourceMonitor() *schema.Resource {
 				Type:     schema.TypeMap,
 				Optional: true,
 			},
+			"custom_http_statuses": {
+				Type:     schema.TypeSet,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"up": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeInt,
+							},
+						},
+						"down": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeInt,
+							},
+						},
+					},
+				},
+			},
 			// TODO - mwindows
 			// TODO - ignore_ssl_errors
 		},
@@ -154,6 +176,17 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 	req.CustomHTTPHeaders = make(map[string]string, len(httpHeaderMap))
 	for k, v := range httpHeaderMap {
 		req.CustomHTTPHeaders[k] = v.(string)
+	}
+
+	// custom_http_statuses
+	for _, httpStatuses := range d.Get("custom_http_statuses").(*schema.Set).List() {
+		httpStatusesMap := httpStatuses.(map[string]interface{})
+		for _, up := range httpStatusesMap["up"].([]interface{}) {
+			req.CustomHTTPStatuses.Up = append(req.CustomHTTPStatuses.Up, up.(int))
+		}
+		for _, down := range httpStatusesMap["down"].([]interface{}) {
+			req.CustomHTTPStatuses.Down = append(req.CustomHTTPStatuses.Down, down.(int))
+		}
 	}
 
 	monitor, err := m.(uptimerobotapi.UptimeRobotApiClient).CreateMonitor(req)
@@ -235,6 +268,17 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 		req.CustomHTTPHeaders[k] = v.(string)
 	}
 
+	// custom_http_statuses
+	for _, httpStatuses := range d.Get("custom_http_statuses").(*schema.Set).List() {
+		httpStatusesMap := httpStatuses.(map[string]interface{})
+		for _, up := range httpStatusesMap["up"].([]interface{}) {
+			req.CustomHTTPStatuses.Up = append(req.CustomHTTPStatuses.Up, up.(int))
+		}
+		for _, down := range httpStatusesMap["down"].([]interface{}) {
+			req.CustomHTTPStatuses.Down = append(req.CustomHTTPStatuses.Down, down.(int))
+		}
+	}
+
 	monitor, err := m.(uptimerobotapi.UptimeRobotApiClient).UpdateMonitor(req)
 	if err != nil {
 		return err
@@ -278,6 +322,17 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) err
 
 	if err := d.Set("custom_http_headers", m.CustomHTTPHeaders); err != nil {
 		return fmt.Errorf("error setting custom_http_headers for resource %s: %s", d.Id(), err)
+	}
+
+	if len(m.CustomHTTPStatuses.Up) > 0 || len(m.CustomHTTPStatuses.Down) > 0 {
+		rawHTTPStatuses := make([]map[string]interface{}, 1)
+		rawHTTPStatuses[0] = map[string]interface{}{
+			"up":   m.CustomHTTPStatuses.Up,
+			"down": m.CustomHTTPStatuses.Down,
+		}
+		if err := d.Set("custom_http_statuses", rawHTTPStatuses); err != nil {
+			return fmt.Errorf("error setting custom_http_statuses for resource %s: %s", d.Id(), err)
+		}
 	}
 
 	rawContacts := make([]map[string]interface{}, len(m.AlertContacts))
