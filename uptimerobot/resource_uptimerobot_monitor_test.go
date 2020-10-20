@@ -211,6 +211,39 @@ func TestUptimeRobotDataResourceMonitor_custom_port_monitor(t *testing.T) {
 	})
 }
 
+func TestUptimeRobotDataResourceMonitor_custom_ignore_ssl_errors(t *testing.T) {
+	var FriendlyName = "TF Test:  custom ignore ssl errors"
+	var Type = "http"
+	var URL = "https://google.com"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name     = "%s"
+					type              = "%s"
+					url               = "%s"
+					ignore_ssl_errors = 1
+				}
+				`, FriendlyName, Type, URL),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "ignore_ssl_errors", "1"),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
 func TestUptimeRobotDataResourceMonitor_custom_alert_contact_threshold_and_recurrence(t *testing.T) {
 	var FriendlyName = "TF Test: custom alert contact threshold & recurrence"
 	var Type = "http"
