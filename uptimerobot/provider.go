@@ -12,7 +12,7 @@ package uptimerobot
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
+	uptimerobotapi "github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 // Provider returns a terraform.ResourceProvider.
@@ -28,6 +28,7 @@ func Provider() terraform.ResourceProvider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"uptimerobot_account":       dataSourceAccount(),
 			"uptimerobot_alert_contact": dataSourceAlertContact(),
+			"uptimerobot_monitor":       dataSourceMonitor(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"uptimerobot_alert_contact": resourceAlertContact(),
