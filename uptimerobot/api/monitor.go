@@ -78,6 +78,116 @@ type Monitor struct {
 	AlertContacts []MonitorAlertContact
 }
 
+func (client UptimeRobotApiClient) GetMonitors() (ms []Monitor, err error) {
+	data := url.Values{}
+	data.Add("custom_http_headers", fmt.Sprintf("%d", 1))
+	data.Add("alert_contacts", fmt.Sprintf("%d", 1))
+
+	maxMonitorRecords := 50
+	data.Add("limit", fmt.Sprintf("%d", maxMonitorRecords))
+
+	offset := 0
+	data.Add("offset", fmt.Sprintf("%d", offset))
+
+	var total float64
+
+	for {
+		body, err := client.MakeCall(
+			"getMonitors",
+			data.Encode(),
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		monitors, ok := body["monitors"].([]interface{})
+		if !ok {
+			j, _ := json.Marshal(body)
+			err = errors.New("Unknown response from the server: " + string(j))
+			return nil, err
+		}
+
+		for _, i := range monitors {
+			monitor := i.(map[string]interface{})
+
+			var m Monitor
+			m.ID = int(monitor["id"].(float64))
+			m.FriendlyName = monitor["friendly_name"].(string)
+			m.URL = monitor["url"].(string)
+			m.Type = intToString(monitorType, int(monitor["type"].(float64)))
+			m.Status = intToString(monitorStatus, int(monitor["status"].(float64)))
+			m.Interval = int(monitor["interval"].(float64))
+
+			switch m.Type {
+			case "port":
+				m.SubType = intToString(monitorSubType, int(monitor["sub_type"].(float64)))
+				if m.SubType != "custom" {
+					m.Port = 0
+				} else {
+					m.Port = int(monitor["port"].(float64))
+				}
+				break
+			case "keyword":
+				m.KeywordType = intToString(monitorKeywordType, int(monitor["keyword_type"].(float64)))
+				m.KeywordValue = monitor["keyword_value"].(string)
+
+				if val := monitor["http_auth_type"]; val != nil {
+					// PS: There seems to be a bug in the UR api as it never returns this value
+					m.HTTPAuthType = intToString(monitorHTTPAuthType, int(val.(float64)))
+				}
+				m.HTTPUsername = monitor["http_username"].(string)
+				m.HTTPPassword = monitor["http_password"].(string)
+				break
+			case "http":
+				if val := monitor["http_auth_type"]; val != nil {
+					// PS: There seems to be a bug in the UR api as it never returns this value
+					m.HTTPAuthType = intToString(monitorHTTPAuthType, int(val.(float64)))
+				}
+				m.HTTPUsername = monitor["http_username"].(string)
+				m.HTTPPassword = monitor["http_password"].(string)
+				break
+			}
+
+			customHTTPHeaders := make(map[string]string)
+			for k, v := range monitor["custom_http_headers"].(map[string]interface{}) {
+				customHTTPHeaders[k] = v.(string)
+			}
+			m.CustomHTTPHeaders = customHTTPHeaders
+
+			if contacts := monitor["alert_contacts"].([]interface{}); contacts != nil {
+				m.AlertContacts = make([]MonitorAlertContact, len(contacts))
+				for k, v := range contacts {
+					contact := v.(map[string]interface{})
+					var ac MonitorAlertContact
+					ac.ID = contact["id"].(string)
+					// Recurrence and Threshold may be null
+					ac.Recurrence = 0
+					if recurrence := contact["recurrence"]; recurrence != nil {
+						ac.Recurrence = int(recurrence.(float64))
+					}
+					ac.Threshold = 0
+					if threshold := contact["threshold"]; threshold != nil {
+						ac.Threshold = int(threshold.(float64))
+					}
+					m.AlertContacts[k] = ac
+				}
+			}
+
+			ms = append(ms, m)
+		}
+
+		total = body["pagination"].(map[string]interface{})["total"].(float64)
+		if float64(len(ms)) != total {
+			offset += maxMonitorRecords
+			data.Set("offset", fmt.Sprintf("%d", offset))
+		} else {
+			break
+		}
+	}
+
+	return
+}
+
 func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 	data := url.Values{}
 	data.Add("monitors", fmt.Sprintf("%d", id))
