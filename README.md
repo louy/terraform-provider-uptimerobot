@@ -24,7 +24,7 @@ provider "uptimerobot" {
 data "uptimerobot_account" "account" {}
 
 data "uptimerobot_alert_contact" "default_alert_contact" {
-  friendly_name = "${data.uptimerobot_account.account.email}"
+  friendly_name = data.uptimerobot_account.account.email
 }
 
 resource "uptimerobot_alert_contact" "slack" {
@@ -41,13 +41,13 @@ resource "uptimerobot_monitor" "main" {
   interval      = 300
 
   alert_contact {
-    id = "${uptimerobot_alert_contact.slack.id}"
+    id = uptimerobot_alert_contact.slack.id
     # threshold  = 0  # pro only
     # recurrence = 0  # pro only
   }
 
   alert_contact {
-    id = "${data.uptimerobot_alert_contact.default_alert_contact.id}"
+    id = data.uptimerobot_alert_contact.default_alert_contact.id
   }
 }
 
@@ -64,13 +64,13 @@ resource "uptimerobot_status_page" "main" {
   custom_domain  = "status.example.com"
   password       = "WeAreAwsome"
   sort           = "down-up-paused"
-  monitors       = ["${uptimerobot_monitor.main.id}"]
+  monitors       = [uptimerobot_monitor.main.id]
 }
 
 resource "aws_route53_record" {
   zone_id = "[MY ZONE ID]"
   type    = "CNAME"
-  records = ["${uptimerobot_status_page.main.dns_address}"]
+  records = [uptimerobot_status_page.main.dns_address]
 }
 
 ```

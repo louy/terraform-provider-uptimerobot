@@ -15,7 +15,7 @@ Use the navigation to the left to read about the available resources.
 ```hcl
 # Configure the UptimeRobot Provider
 provider "uptimerobot" {
-  api_key = "${var.uptimerobot_api_key}"
+  api_key = var.uptimerobot_api_key
 }
 
 # Create a monitor
