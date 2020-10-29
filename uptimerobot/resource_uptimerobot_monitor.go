@@ -79,6 +79,11 @@ func resourceMonitor() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"ignore_ssl_errors": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 			"alert_contact": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -105,7 +110,6 @@ func resourceMonitor() *schema.Resource {
 				Optional: true,
 			},
 			// TODO - mwindows
-			// TODO - ignore_ssl_errors
 		},
 	}
 }
@@ -139,6 +143,8 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 
 	// Add optional attributes
 	req.Interval = d.Get("interval").(int)
+
+	req.IgnoreSSLErrors = d.Get("ignore_ssl_errors").(bool)
 
 	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, len(d.Get("alert_contact").([]interface{})))
 	for k, v := range d.Get("alert_contact").([]interface{}) {
@@ -218,6 +224,7 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 
 	// Add optional attributes
 	req.Interval = d.Get("interval").(int)
+	req.IgnoreSSLErrors = d.Get("ignore_ssl_errors").(bool)
 
 	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, len(d.Get("alert_contact").([]interface{})))
 	for k, v := range d.Get("alert_contact").([]interface{}) {
@@ -275,6 +282,8 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) err
 	d.Set("http_password", m.HTTPPassword)
 	// PS: There seems to be a bug in the UR api as it never returns this value
 	// d.Set("http_auth_type", m.HTTPAuthType)
+
+	d.Set("ignore_ssl_errors", m.IgnoreSSLErrors)
 
 	if err := d.Set("custom_http_headers", m.CustomHTTPHeaders); err != nil {
 		return fmt.Errorf("error setting custom_http_headers for resource %s: %s", d.Id(), err)

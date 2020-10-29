@@ -71,6 +71,8 @@ type Monitor struct {
 	HTTPPassword string `json:"http_password"`
 	HTTPAuthType string `json:"http_auth_type"`
 
+	IgnoreSSLErrors bool `json:"ignore_ssl_errors"`
+
 	CustomHTTPHeaders map[string]string
 
 	AlertContacts []MonitorAlertContact
@@ -79,6 +81,7 @@ type Monitor struct {
 func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 	data := url.Values{}
 	data.Add("monitors", fmt.Sprintf("%d", id))
+	data.Add("ssl", fmt.Sprintf("%d", 1))
 	data.Add("custom_http_headers", fmt.Sprintf("%d", 1))
 	data.Add("alert_contacts", fmt.Sprintf("%d", 1))
 
@@ -142,6 +145,13 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 		break
 	}
 
+	ignoreSSLErrors := int(monitor["ssl"].(map[string]interface{})["ignore_errors"].(float64))
+	if ignoreSSLErrors == 1 {
+		m.IgnoreSSLErrors = true
+	} else {
+		m.IgnoreSSLErrors = false
+	}
+
 	customHTTPHeaders := make(map[string]string)
 	for k, v := range monitor["custom_http_headers"].(map[string]interface{}) {
 		customHTTPHeaders[k] = v.(string)
@@ -184,6 +194,8 @@ type MonitorCreateRequest struct {
 	HTTPPassword string
 	HTTPAuthType string
 
+	IgnoreSSLErrors bool
+
 	AlertContacts []MonitorRequestAlertContact
 
 	CustomHTTPHeaders map[string]string
@@ -214,6 +226,13 @@ func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Mo
 		data.Add("http_password", req.HTTPPassword)
 		break
 	}
+
+	if req.IgnoreSSLErrors {
+		data.Add("ignore_ssl_errors", "1")
+	} else {
+		data.Add("ignore_ssl_errors", "0")
+	}
+
 	acStrings := make([]string, len(req.AlertContacts))
 	for k, v := range req.AlertContacts {
 		acStrings[k] = fmt.Sprintf("%s_%d_%d", v.ID, v.Threshold, v.Recurrence)
@@ -259,6 +278,8 @@ type MonitorUpdateRequest struct {
 	HTTPPassword string
 	HTTPAuthType string
 
+	IgnoreSSLErrors bool
+
 	AlertContacts []MonitorRequestAlertContact
 
 	CustomHTTPHeaders map[string]string
@@ -290,6 +311,13 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 		data.Add("http_password", req.HTTPPassword)
 		break
 	}
+
+	if req.IgnoreSSLErrors {
+		data.Add("ignore_ssl_errors", "1")
+	} else {
+		data.Add("ignore_ssl_errors", "0")
+	}
+
 	acStrings := make([]string, len(req.AlertContacts))
 	for k, v := range req.AlertContacts {
 		acStrings[k] = fmt.Sprintf("%s_%d_%d", v.ID, v.Threshold, v.Recurrence)
