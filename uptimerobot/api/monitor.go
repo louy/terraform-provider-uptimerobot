@@ -89,7 +89,7 @@ func (client UptimeRobotApiClient) GetMonitors() (ms []Monitor, err error) {
 	offset := 0
 	data.Add("offset", fmt.Sprintf("%d", offset))
 
-	var total float64
+	var total int
 
 	for {
 		body, err := client.MakeCall(
@@ -176,9 +176,9 @@ func (client UptimeRobotApiClient) GetMonitors() (ms []Monitor, err error) {
 			ms = append(ms, m)
 		}
 
-		total = body["pagination"].(map[string]interface{})["total"].(float64)
-		if float64(len(ms)) != total {
-			offset += maxMonitorRecords
+		total = int(body["pagination"].(map[string]interface{})["total"].(float64))
+		offset += maxMonitorRecords
+		if offset < total {
 			data.Set("offset", fmt.Sprintf("%d", offset))
 		} else {
 			break
