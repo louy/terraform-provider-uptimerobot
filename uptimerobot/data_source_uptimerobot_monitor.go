@@ -2,7 +2,6 @@ package uptimerobot
 
 import (
 	"fmt"
-	"reflect"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	uptimerobotapi "github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
@@ -42,25 +41,25 @@ func dataSourceMonitor() *schema.Resource {
 }
 
 func dataSourceMonitorRead(d *schema.ResourceData, m interface{}) error {
-	monitors, err := m.(uptimerobotapi.UptimeRobotApiClient).GetMonitors()
+	friendlyName := d.Get("friendly_name").(string)
+
+	ids, err := m.(uptimerobotapi.UptimeRobotApiClient).GetMonitorIDs(friendlyName)
 	if err != nil {
 		return err
 	}
 
-	friendlyName := d.Get("friendly_name").(string)
-
-	var monitor uptimerobotapi.Monitor
-
-	for _, m := range monitors {
-		if friendlyName != "" && m.FriendlyName == friendlyName {
-			monitor = m
-			break
-		}
-	}
-	if reflect.DeepEqual(monitor, uptimerobotapi.Monitor{}) {
+	if len(ids) < 1 {
 		return fmt.Errorf("Failed to find monitor by name %s", friendlyName)
 	}
 
+	if len(ids) > 1 {
+		return fmt.Errorf("More than one monitor with name %s exists", friendlyName)
+	}
+
+	monitor, err := m.(uptimerobotapi.UptimeRobotApiClient).GetMonitor(ids[0])
+	if err != nil {
+		return err
+	}
 	d.SetId(fmt.Sprintf("%d", monitor.ID))
 	if err := updateMonitorResource(d, monitor); err != nil {
 		return err
