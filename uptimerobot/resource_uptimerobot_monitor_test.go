@@ -226,14 +226,14 @@ func TestUptimeRobotDataResourceMonitor_custom_ignore_ssl_errors(t *testing.T) {
 					friendly_name     = "%s"
 					type              = "%s"
 					url               = "%s"
-					ignore_ssl_errors = 1
+					ignore_ssl_errors = true
 				}
 				`, FriendlyName, Type, URL),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
-					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "ignore_ssl_errors", "1"),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "ignore_ssl_errors", "true"),
 				),
 			},
 			resource.TestStep{
