@@ -82,6 +82,7 @@ func (client UptimeRobotApiClient) GetMonitorIDs(friendlyName string) (ids []int
 	data := url.Values{}
 	data.Add("custom_http_headers", fmt.Sprintf("%d", 1))
 	data.Add("alert_contacts", fmt.Sprintf("%d", 1))
+	data.Add("search", friendlyName)
 
 	maxMonitorRecords := 50
 	data.Add("limit", fmt.Sprintf("%d", maxMonitorRecords))
