@@ -31,8 +31,9 @@ func resourceStatusPage() *schema.Resource {
 				Default:  "",
 			},
 			"password": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:      schema.TypeString,
+				Optional:  true,
+				Sensitive: true,
 			},
 			"sort": {
 				Type:         schema.TypeString,
