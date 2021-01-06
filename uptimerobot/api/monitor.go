@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"sort"
 	"strings"
 )
 
@@ -168,6 +169,9 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 			ac.Threshold = int(contact["threshold"].(float64))
 			m.AlertContacts[k] = ac
 		}
+		sort.Slice(m.AlertContacts, func(i, j int) bool {
+			return m.AlertContacts[i].ID < m.AlertContacts[j].ID
+		})
 	}
 
 	return
