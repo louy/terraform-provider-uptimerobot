@@ -23,4 +23,4 @@ data "uptimerobot_account" "main" {}
  * `monitor_interval` - the min monitoring interval (in seconds) supported by the account
  * `up_monitors` - the number of "up" monitors
  * `down_monitors` - the number of "down" monitors
- * `pause_monitors` - the number of "paused" monitors
+ * `paused_monitors` - the number of "paused" monitors
