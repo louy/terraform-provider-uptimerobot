@@ -79,6 +79,59 @@ type Monitor struct {
 	AlertContacts []MonitorAlertContact
 }
 
+func (client UptimeRobotApiClient) GetMonitorIDs(friendlyName string) (ids []int, err error) {
+	data := url.Values{}
+	data.Add("custom_http_headers", fmt.Sprintf("%d", 1))
+	data.Add("alert_contacts", fmt.Sprintf("%d", 1))
+	data.Add("search", friendlyName)
+
+	maxMonitorRecords := 50
+	data.Add("limit", fmt.Sprintf("%d", maxMonitorRecords))
+
+	offset := 0
+	data.Add("offset", fmt.Sprintf("%d", offset))
+
+	var total int
+
+	for {
+		body, err := client.MakeCall(
+			"getMonitors",
+			data.Encode(),
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		monitors, ok := body["monitors"].([]interface{})
+		if !ok {
+			j, _ := json.Marshal(body)
+			err = errors.New("Unknown response from the server: " + string(j))
+			return nil, err
+		}
+
+		for _, i := range monitors {
+			monitor := i.(map[string]interface{})
+			monitorID := int(monitor["id"].(float64))
+			monitorFriendlyName := monitor["friendly_name"].(string)
+
+			if monitorFriendlyName == friendlyName {
+				ids = append(ids, monitorID)
+			}
+		}
+
+		total = int(body["pagination"].(map[string]interface{})["total"].(float64))
+		offset += maxMonitorRecords
+		if offset < total {
+			// get monitors for next page
+			data.Set("offset", fmt.Sprintf("%d", offset))
+		} else {
+			break
+		}
+	}
+
+	return
+}
+
 func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 	data := url.Values{}
 	data.Add("monitors", fmt.Sprintf("%d", id))
