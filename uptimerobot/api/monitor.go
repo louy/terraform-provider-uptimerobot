@@ -54,6 +54,11 @@ type MonitorAlertContact struct {
 	Threshold  int    `json:"threshold"`
 }
 
+type MonitorRequestCustomHTTPStatuses struct {
+	Up   []int
+	Down []int
+}
+
 type Monitor struct {
 	ID           int    `json:"id"`
 	FriendlyName string `json:"friendly_name"`
@@ -76,6 +81,8 @@ type Monitor struct {
 
 	CustomHTTPHeaders map[string]string
 
+	CustomHTTPStatuses MonitorRequestCustomHTTPStatuses
+
 	AlertContacts []MonitorAlertContact
 }
 
@@ -84,6 +91,7 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 	data.Add("monitors", fmt.Sprintf("%d", id))
 	data.Add("ssl", fmt.Sprintf("%d", 1))
 	data.Add("custom_http_headers", fmt.Sprintf("%d", 1))
+	data.Add("custom_http_statuses", fmt.Sprintf("%d", 1))
 	data.Add("alert_contacts", fmt.Sprintf("%d", 1))
 
 	body, err := client.MakeCall(
@@ -159,6 +167,21 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 	}
 	m.CustomHTTPHeaders = customHTTPHeaders
 
+	if httpStatuses, ok := monitor["custom_http_statuses"].(map[string]interface{}); ok {
+		for _, up := range httpStatuses["up"].([]interface{}) {
+			v := int(up.(float64))
+			if v >= 400 {
+				m.CustomHTTPStatuses.Up = append(m.CustomHTTPStatuses.Up, v)
+			}
+		}
+		for _, down := range httpStatuses["down"].([]interface{}) {
+			v := int(down.(float64))
+			if v < 400 {
+				m.CustomHTTPStatuses.Down = append(m.CustomHTTPStatuses.Down, v)
+			}
+		}
+	}
+
 	if contacts := monitor["alert_contacts"].([]interface{}); contacts != nil {
 		m.AlertContacts = make([]MonitorAlertContact, len(contacts))
 		for k, v := range contacts {
@@ -203,6 +226,8 @@ type MonitorCreateRequest struct {
 	AlertContacts []MonitorRequestAlertContact
 
 	CustomHTTPHeaders map[string]string
+
+	CustomHTTPStatuses MonitorRequestCustomHTTPStatuses
 }
 
 func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Monitor, err error) {
@@ -251,6 +276,20 @@ func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Mo
 		}
 	}
 
+	// custom http statuses
+	if len(req.CustomHTTPStatuses.Up) != 0 || len(req.CustomHTTPStatuses.Down) != 0 {
+		statusStrings := make([]string, 0)
+		for _, v := range req.CustomHTTPStatuses.Down {
+			s := fmt.Sprintf("%d:0", v)
+			statusStrings = append(statusStrings, s)
+		}
+		for _, v := range req.CustomHTTPStatuses.Up {
+			s := fmt.Sprintf("%d:1", v)
+			statusStrings = append(statusStrings, s)
+		}
+		data.Add("custom_http_statuses", strings.Join(statusStrings, "_"))
+	}
+
 	body, err := client.MakeCall(
 		"newMonitor",
 		data.Encode(),
@@ -287,6 +326,8 @@ type MonitorUpdateRequest struct {
 	AlertContacts []MonitorRequestAlertContact
 
 	CustomHTTPHeaders map[string]string
+
+	CustomHTTPStatuses MonitorRequestCustomHTTPStatuses
 }
 
 func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Monitor, err error) {
@@ -337,6 +378,22 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 	} else {
 		//delete custom http headers when it is empty
 		data.Add("custom_http_headers", "{}")
+	}
+
+	// custom http statuses
+	if len(req.CustomHTTPStatuses.Up) != 0 || len(req.CustomHTTPStatuses.Down) != 0 {
+		statusStrings := make([]string, 0)
+		for _, v := range req.CustomHTTPStatuses.Down {
+			s := fmt.Sprintf("%d:0", v)
+			statusStrings = append(statusStrings, s)
+		}
+		for _, v := range req.CustomHTTPStatuses.Up {
+			s := fmt.Sprintf("%d:1", v)
+			statusStrings = append(statusStrings, s)
+		}
+		data.Add("custom_http_statuses", strings.Join(statusStrings, "_"))
+	} else {
+		data.Add("custom_http_statuses", "200:1")
 	}
 
 	_, err = client.MakeCall(
