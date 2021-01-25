@@ -23,7 +23,7 @@ resource `uptimerobot_alert_contact` `slack` {
 ## Arguments Reference
 
 * `friendly_name` - friendly name of the alert contact (for making it easier to distinguish from others).
-* `type` - the type of the alert contact notified (Zapier, HipChat and Slack are not supported in the api yet)
+* `type` - the type of the alert contact notified (`sms` is [not supported](https://uptimerobot.com/api/) for creation in the API yet)
 
   Possible values are the following:
   - `sms`
