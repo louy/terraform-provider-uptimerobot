@@ -36,6 +36,8 @@ resource `uptimerobot_alert_contact` `slack` {
   - `pushover`
   - `hipchat`
   - `slack`
+  - `telegram`
+  - `hangouts`
 * `value` - alert contact's address/phone/url
 
 ## Attributes Reference

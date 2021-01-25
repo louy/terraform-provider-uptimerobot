@@ -21,6 +21,7 @@ var alertContactType = map[string]int{
 	"pushover":   9,
 	"hipchat":    10,
 	"slack":      11,
+	"telegram":		18,
 	"hangouts":	  21,
 }
 var AlertContactType = mapKeys(alertContactType)
