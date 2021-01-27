@@ -1,0 +1,51 @@
+# Validate release in terraform registry is working
+
+name: Validate Release
+
+# on:
+#   release:
+#     types: [published]
+
+# FIXME
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    env:
+      UPTIMEROBOT_API_KEY: ${{ secrets.UPTIMEROBOT_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      # Runs a single command using the runners shell
+      - name: Create a terraform setup file
+        run: |
+          mkdir test
+          cat << EOF > test/test.tf
+          terraform {
+            required_providers {
+              uptimerobot = {
+                source = "louy/uptimerobot"
+                version = "$GITHUB_REF"
+              }
+            }
+            required_version = ">= 0.13"
+          }
+
+          data uptimerobot_account default {}
+          EOF
+      
+      - name: Terraform Init
+        run: terraform init
+        working-directory: test
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: test
