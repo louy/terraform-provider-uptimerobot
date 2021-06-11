@@ -244,6 +244,7 @@ func TestUptimeRobotDataResourceMonitor_custom_ignore_ssl_errors(t *testing.T) {
 		},
 	})
 }
+
 func TestUptimeRobotDataResourceMonitor_custom_alert_contact_threshold_and_recurrence(t *testing.T) {
 	var FriendlyName = "TF Test: custom alert contact threshold & recurrence"
 	var Type = "http"

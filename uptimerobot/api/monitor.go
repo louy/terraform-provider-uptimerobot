@@ -195,6 +195,13 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 	return
 }
 
+type MonitorRequestHTTPParams struct {
+	Method string
+	Username string
+	Password string
+	AuthType string
+}
+
 type MonitorRequestAlertContact struct {
 	ID         string
 	Threshold  int
@@ -212,11 +219,7 @@ type MonitorCreateRequest struct {
 	KeywordType  string
 	KeywordValue string
 
-	HTTPMethod string
-
-	HTTPUsername string
-	HTTPPassword string
-	HTTPAuthType string
+	HTTP MonitorRequestHTTPParams
 
 	IgnoreSSLErrors bool
 
@@ -239,23 +242,10 @@ func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Mo
 	case "keyword":
 		data.Add("keyword_type", fmt.Sprintf("%d", monitorKeywordType[req.KeywordType]))
 		data.Add("keyword_value", req.KeywordValue)
-
-		if req.HTTPMethod != "" {
-			data.Add("http_method", fmt.Sprintf("%d", monitorHTTPMethod[req.HTTPMethod]))
-		}
-
-		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
-		data.Add("http_username", req.HTTPUsername)
-		data.Add("http_password", req.HTTPPassword)
+		SetHttpParameters(req.HTTP, data)
 		break
 	case "http":
-		if req.HTTPMethod != "" {
-			data.Add("http_method", fmt.Sprintf("%d", monitorHTTPMethod[req.HTTPMethod]))
-		}
-
-		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
-		data.Add("http_username", req.HTTPUsername)
-		data.Add("http_password", req.HTTPPassword)
+		SetHttpParameters(req.HTTP, data)
 		break
 	}
 
@@ -306,11 +296,7 @@ type MonitorUpdateRequest struct {
 	KeywordType  string
 	KeywordValue string
 
-	HTTPMethod string
-
-	HTTPUsername string
-	HTTPPassword string
-	HTTPAuthType string
+	HTTP MonitorRequestHTTPParams
 
 	IgnoreSSLErrors bool
 
@@ -334,23 +320,10 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 	case "keyword":
 		data.Add("keyword_type", fmt.Sprintf("%d", monitorKeywordType[req.KeywordType]))
 		data.Add("keyword_value", req.KeywordValue)
-
-		if req.HTTPMethod != "" {
-			data.Add("http_method", fmt.Sprintf("%d", monitorHTTPMethod[req.HTTPMethod]))
-		}
-
-		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
-		data.Add("http_username", req.HTTPUsername)
-		data.Add("http_password", req.HTTPPassword)
+		SetHttpParameters(req.HTTP, data)
 		break
 	case "http":
-		if req.HTTPMethod != "" {
-			data.Add("http_method", fmt.Sprintf("%d", monitorHTTPMethod[req.HTTPMethod]))
-		}
-
-		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
-		data.Add("http_username", req.HTTPUsername)
-		data.Add("http_password", req.HTTPPassword)
+		SetHttpParameters(req.HTTP, data)
 		break
 	}
 
@@ -400,4 +373,14 @@ func (client UptimeRobotApiClient) DeleteMonitor(id int) (err error) {
 		return
 	}
 	return
+}
+
+func SetHttpParameters(http MonitorRequestHTTPParams, data url.Values) {
+	if http.Method != "" {
+		data.Add("http_method", fmt.Sprintf("%d", monitorHTTPMethod[http.Method]))
+	}
+
+	data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[http.AuthType]))
+	data.Add("http_username", http.Username)
+	data.Add("http_password", http.Password)
 }
