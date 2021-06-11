@@ -244,6 +244,7 @@ func TestUptimeRobotDataResourceMonitor_custom_ignore_ssl_errors(t *testing.T) {
 		},
 	})
 }
+
 func TestUptimeRobotDataResourceMonitor_custom_alert_contact_threshold_and_recurrence(t *testing.T) {
 	var FriendlyName = "TF Test: custom alert contact threshold & recurrence"
 	var Type = "http"
@@ -479,6 +480,41 @@ func TestUptimeRobotDataResourceMonitor_http_auth_monitor(t *testing.T) {
 				ImportState:  true,
 				// NB: Disabled due to http_auth_type issue
 				// ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestUptimeRobotDataResourceMonitor_http_method(t *testing.T) {
+	var FriendlyName = "TF Test: http method monitor"
+	var Type = "http"
+	var Method = "HEAD"
+	var URL = "https://google.com"
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t); testProAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckMonitorDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(`
+				resource "uptimerobot_monitor" "test" {
+					friendly_name = "%s"
+					type          = "%s"
+					url           = "%s"
+					http_method   = "%s"
+				}
+				`, FriendlyName, Type, URL, Method),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "http_method", Method),
+				),
+			},
+			resource.TestStep{
+				ResourceName:      "uptimerobot_monitor.test",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})

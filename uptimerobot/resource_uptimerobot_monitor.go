@@ -62,6 +62,11 @@ func resourceMonitor() *schema.Resource {
 				Optional: true,
 				Default:  300,
 			},
+			"http_method": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringInSlice(uptimerobotapi.MonitorHTTPMethod, false),
+			},
 			"http_username": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -130,15 +135,10 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 	case "keyword":
 		req.KeywordType = d.Get("keyword_type").(string)
 		req.KeywordValue = d.Get("keyword_value").(string)
-
-		req.HTTPUsername = d.Get("http_username").(string)
-		req.HTTPPassword = d.Get("http_password").(string)
-		req.HTTPAuthType = d.Get("http_auth_type").(string)
+		req.HTTP = MonitorRequestHTTPParamsFromSchema(d)
 		break
 	case "http":
-		req.HTTPUsername = d.Get("http_username").(string)
-		req.HTTPPassword = d.Get("http_password").(string)
-		req.HTTPAuthType = d.Get("http_auth_type").(string)
+		req.HTTP = MonitorRequestHTTPParamsFromSchema(d)
 		break
 	}
 
@@ -212,14 +212,10 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 		req.KeywordType = d.Get("keyword_type").(string)
 		req.KeywordValue = d.Get("keyword_value").(string)
 
-		req.HTTPUsername = d.Get("http_username").(string)
-		req.HTTPPassword = d.Get("http_password").(string)
-		req.HTTPAuthType = d.Get("http_auth_type").(string)
+		req.HTTP = MonitorRequestHTTPParamsFromSchema(d)
 		break
 	case "http":
-		req.HTTPUsername = d.Get("http_username").(string)
-		req.HTTPPassword = d.Get("http_password").(string)
-		req.HTTPAuthType = d.Get("http_auth_type").(string)
+		req.HTTP = MonitorRequestHTTPParamsFromSchema(d)
 		break
 	}
 
@@ -282,6 +278,8 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) err
 	d.Set("keyword_type", m.KeywordType)
 	d.Set("keyword_value", m.KeywordValue)
 
+	d.Set("http_method", m.HTTPMethod)
+
 	d.Set("http_username", m.HTTPUsername)
 	d.Set("http_password", m.HTTPPassword)
 	// PS: There seems to be a bug in the UR api as it never returns this value
@@ -306,4 +304,13 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) err
 	}
 
 	return nil
+}
+
+func MonitorRequestHTTPParamsFromSchema(d *schema.ResourceData) uptimerobotapi.MonitorRequestHTTPParams {
+	return uptimerobotapi.MonitorRequestHTTPParams{
+		Method:   d.Get("http_method").(string),
+		Username: d.Get("http_username").(string),
+		Password: d.Get("http_password").(string),
+		AuthType: d.Get("http_auth_type").(string),
+	}
 }
