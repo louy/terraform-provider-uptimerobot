@@ -75,6 +75,9 @@ resource "aws_route53_record" {
 
 ```
 
+Beware of [Uptime robot rate limiting](https://uptimerobot.com/api/). When the limit is reach,
+the provider will just wait some time before retrying, so it can be *really* slow.
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
