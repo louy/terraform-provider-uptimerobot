@@ -2,7 +2,6 @@ package uptimerobotapi
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/url"
 	"sort"
@@ -96,13 +95,17 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 
 	monitors, ok := body["monitors"].([]interface{})
 	if !ok {
-		j, _ := json.Marshal(body)
-		err = errors.New("Unknown response from the server: " + string(j))
+		j, jsonErr := json.Marshal(body)
+		if err != nil {
+			err = fmt.Errorf("Unable to parse the JSON response from the server: %s. Body: %s", jsonErr, body)
+			return
+		}
+		err = fmt.Errorf("Missing 'monitors' in JSON response from the server: %v", j)
 		return
 	}
 
 	if len(monitors) < 1 {
-		err = errors.New("Monitor not found: " + string(id))
+		err = fmt.Errorf("Monitor not found: %d", id)
 		return
 	}
 
