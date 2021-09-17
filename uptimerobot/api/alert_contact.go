@@ -88,7 +88,7 @@ func (client UptimeRobotApiClient) GetAlertContacts() (acs []AlertContact, err e
 	}
 
 	if float64(len(acs)) != total {
-		err = errors.New("Hitting pagination limit of: " + string(page_limit))
+		err = fmt.Errorf("Hitting pagination limit of: %d", page_limit)
 	}
 
 	return
