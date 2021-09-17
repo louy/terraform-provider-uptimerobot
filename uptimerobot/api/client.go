@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/hashicorp/go-retryablehttp"
 )
 
 func New(apiKey string) UptimeRobotApiClient {
@@ -35,7 +37,11 @@ func (client UptimeRobotApiClient) MakeCall(
 	req.Header.Add("cache-control", "no-cache")
 	req.Header.Add("content-type", "application/x-www-form-urlencoded")
 
-	res, err := http.DefaultClient.Do(req)
+	retryClient := retryablehttp.NewClient()
+	retryClient.RetryMax = 10
+	standardClient := retryClient.StandardClient()
+
+	res, err := standardClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -46,14 +52,18 @@ func (client UptimeRobotApiClient) MakeCall(
 		return nil, err
 	}
 
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("Got %d response from UptimeRobot: %s", res.StatusCode, body)
+	}
+
 	log.Printf("[DEBUG] Got response: %#v", res)
 	log.Printf("[DEBUG] Got body: %#v", string(body))
 
-	// fmt.Printf("Got response: %#v\n", res)
-	// fmt.Printf("Got body: %#v\n", string(body))
-
 	var result map[string]interface{}
-	json.Unmarshal([]byte(body), &result)
+	err = json.Unmarshal([]byte(body), &result)
+	if err != nil {
+		return nil, fmt.Errorf("Got decoding json from UptimeRobot: %s. Response body: %s", err.Error(), body)
+	}
 
 	if result["stat"] != "ok" {
 		message, _ := json.Marshal(result["error"])
