@@ -21,8 +21,9 @@ var alertContactType = map[string]int{
 	"pushover":   9,
 	"hipchat":    10,
 	"slack":      11,
-	"telegram":		18,
-	"hangouts":	  21,
+	"phone":      13,
+	"telegram":   18,
+	"hangouts":   21,
 }
 var AlertContactType = mapKeys(alertContactType)
 
@@ -117,7 +118,10 @@ func (client UptimeRobotApiClient) GetAlertContact(id string) (ac AlertContact, 
 	alertcontact := alertcontacts[0].(map[string]interface{})
 
 	ac.FriendlyName = alertcontact["friendly_name"].(string)
-	ac.Value = alertcontact["value"].(string)
+	value, exists := alertcontact["value"]
+	if exists {
+		ac.Value = value.(string)
+	}
 	ac.Type = intToString(alertContactType, int(alertcontact["type"].(float64)))
 	ac.Status = intToString(alertContactStatus, int(alertcontact["status"].(float64)))
 
