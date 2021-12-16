@@ -34,10 +34,14 @@ resource `uptimerobot_alert_contact` `slack` {
   - `pushbullet`
   - `zapier`
   - `pushover`
+  - `pagerduty`
+  - `opsgenie`
   - `hipchat`
   - `slack`
   - `telegram`
-  - `hangouts`
+  - `google-chat`
+  - `ms-teams`
+  - `discord`
 * `value` - alert contact's address/phone/url
 
 ## Attributes Reference

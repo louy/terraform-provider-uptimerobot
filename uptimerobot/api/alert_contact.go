@@ -11,18 +11,22 @@ import (
 const page_limit = 10
 
 var alertContactType = map[string]int{
-	"sms":        1,
-	"email":      2,
-	"twitter-dm": 3,
-	"boxcar":     4,
-	"webhook":    5,
-	"pushbullet": 6,
-	"zapier":     7,
-	"pushover":   9,
-	"hipchat":    10,
-	"slack":      11,
-	"telegram":		18,
-	"hangouts":	  21,
+	"sms":         1,
+	"email":       2,
+	"twitter-dm":  3,
+	"boxcar":      4,
+	"webhook":     5,
+	"pushbullet":  6,
+	"zapier":      7,
+	"pushover":    9,
+	"hipchat":     10,
+	"slack":       11,
+	"pagerduty":   16,
+	"opsgenie":    17,
+	"telegram":    18,
+	"ms-teams":    20,
+	"google-chat": 21,
+	"discord":     23,
 }
 var AlertContactType = mapKeys(alertContactType)
 
