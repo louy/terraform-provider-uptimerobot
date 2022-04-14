@@ -10,10 +10,11 @@ import (
 )
 
 var monitorType = map[string]int{
-	"http":    1,
-	"keyword": 2,
-	"ping":    3,
-	"port":    4,
+	"http":      1,
+	"keyword":   2,
+	"ping":      3,
+	"port":      4,
+	"heartbeat": 5,
 }
 var MonitorType = mapKeys(monitorType)
 
@@ -182,90 +183,8 @@ type MonitorRequestAlertContact struct {
 	Threshold  int
 	Recurrence int
 }
-type MonitorCreateRequest struct {
-	FriendlyName string
-	URL          string
-	Type         string
-	Interval     int
 
-	SubType string
-	Port    int
-
-	KeywordType  string
-	KeywordValue string
-
-	HTTPUsername string
-	HTTPPassword string
-	HTTPAuthType string
-
-	IgnoreSSLErrors bool
-
-	AlertContacts []MonitorRequestAlertContact
-
-	CustomHTTPHeaders map[string]string
-}
-
-func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Monitor, err error) {
-	data := url.Values{}
-	data.Add("friendly_name", req.FriendlyName)
-	data.Add("url", req.URL)
-	data.Add("type", fmt.Sprintf("%d", monitorType[req.Type]))
-	data.Add("interval", fmt.Sprintf("%d", req.Interval))
-	switch req.Type {
-	case "port":
-		data.Add("sub_type", fmt.Sprintf("%d", monitorSubType[req.SubType]))
-		data.Add("port", fmt.Sprintf("%d", req.Port))
-		break
-	case "keyword":
-		data.Add("keyword_type", fmt.Sprintf("%d", monitorKeywordType[req.KeywordType]))
-		data.Add("keyword_value", req.KeywordValue)
-
-		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
-		data.Add("http_username", req.HTTPUsername)
-		data.Add("http_password", req.HTTPPassword)
-		break
-	case "http":
-		data.Add("http_auth_type", fmt.Sprintf("%d", monitorHTTPAuthType[req.HTTPAuthType]))
-		data.Add("http_username", req.HTTPUsername)
-		data.Add("http_password", req.HTTPPassword)
-		break
-	}
-
-	if req.IgnoreSSLErrors {
-		data.Add("ignore_ssl_errors", "1")
-	} else {
-		data.Add("ignore_ssl_errors", "0")
-	}
-
-	acStrings := make([]string, len(req.AlertContacts))
-	for k, v := range req.AlertContacts {
-		acStrings[k] = fmt.Sprintf("%s_%d_%d", v.ID, v.Threshold, v.Recurrence)
-	}
-	data.Add("alert_contacts", strings.Join(acStrings, "-"))
-
-	// custom http headers
-	if len(req.CustomHTTPHeaders) > 0 {
-		jsonData, err := json.Marshal(req.CustomHTTPHeaders)
-		if err == nil {
-			data.Add("custom_http_headers", string(jsonData))
-		}
-	}
-
-	body, err := client.MakeCall(
-		"newMonitor",
-		data.Encode(),
-	)
-	if err != nil {
-		return
-	}
-
-	monitor := body["monitor"].(map[string]interface{})
-	id := int(monitor["id"].(float64))
-
-	return client.GetMonitor(id)
-}
-
-type MonitorUpdateRequest struct {
+type MonitorRequest struct {
 	ID           int
 	FriendlyName string
 	URL          string
@@ -289,13 +208,15 @@ type MonitorUpdateRequest struct {
 	CustomHTTPHeaders map[string]string
 }
 
-func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Monitor, err error) {
+func (client UptimeRobotApiClient) setRequest(req *MonitorRequest) url.Values {
 	data := url.Values{}
-	data.Add("id", fmt.Sprintf("%d", req.ID))
 	data.Add("friendly_name", req.FriendlyName)
 	data.Add("url", req.URL)
 	data.Add("type", fmt.Sprintf("%d", monitorType[req.Type]))
 	data.Add("interval", fmt.Sprintf("%d", req.Interval))
+	data.Add("ignore_ssl_errors", "0")
+	data.Add("custom_http_headers", "{}")
+
 	switch req.Type {
 	case "port":
 		data.Add("sub_type", fmt.Sprintf("%d", monitorSubType[req.SubType]))
@@ -314,12 +235,12 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 		data.Add("http_username", req.HTTPUsername)
 		data.Add("http_password", req.HTTPPassword)
 		break
+	case "heartbeat":
+		data.Del("url")
 	}
 
 	if req.IgnoreSSLErrors {
 		data.Add("ignore_ssl_errors", "1")
-	} else {
-		data.Add("ignore_ssl_errors", "0")
 	}
 
 	acStrings := make([]string, len(req.AlertContacts))
@@ -334,10 +255,31 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 		if err == nil {
 			data.Add("custom_http_headers", string(jsonData))
 		}
-	} else {
-		//delete custom http headers when it is empty
-		data.Add("custom_http_headers", "{}")
 	}
+
+	return data
+}
+
+func (client UptimeRobotApiClient) CreateMonitor(req MonitorRequest) (m Monitor, err error) {
+	data := client.setRequest(&req)
+
+	body, err := client.MakeCall(
+		"newMonitor",
+		data.Encode(),
+	)
+	if err != nil {
+		return
+	}
+
+	monitor := body["monitor"].(map[string]interface{})
+	id := int(monitor["id"].(float64))
+
+	return client.GetMonitor(id)
+}
+
+func (client UptimeRobotApiClient) UpdateMonitor(req MonitorRequest) (m Monitor, err error) {
+	data := client.setRequest(&req)
+	data.Add("id", fmt.Sprintf("%d", req.ID))
 
 	_, err = client.MakeCall(
 		"editMonitor",
