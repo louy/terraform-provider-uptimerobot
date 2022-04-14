@@ -559,6 +559,7 @@ func testAccCheckMonitorDestroy(s *terraform.State) error {
 func TestUptimeRobotDataResourceMonitor_heartbeat_monitor(t *testing.T) {
 	var FriendlyName = "TF Test: heartbeat monitor"
 	var Type = "heartbeat"
+	var Interval = "600"
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -566,14 +567,16 @@ func TestUptimeRobotDataResourceMonitor_heartbeat_monitor(t *testing.T) {
 		Steps: []resource.TestStep{
 			resource.TestStep{
 				Config: fmt.Sprintf(`
-				resource "uptimerobot_monitor" "test" {
+				resource "uptimerobot_monitor" "test_heart_monitor" {
 					friendly_name = "%s"
 					type          = "%s"
+					interval      = "%s"
 				}
 				`, FriendlyName, Type),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "friendly_name", FriendlyName),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "interval", Interval),
 				),
 			},
 			resource.TestStep{
