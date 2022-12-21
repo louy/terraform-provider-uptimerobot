@@ -39,6 +39,7 @@ resource "uptimerobot_monitor" "main" {
   url           = "http://example.com"
   # pro allows 60 seconds
   interval      = 300
+  paused        = true
 
   alert_contact {
     id = uptimerobot_alert_contact.slack.id
