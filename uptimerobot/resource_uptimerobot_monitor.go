@@ -85,6 +85,11 @@ func resourceMonitor() *schema.Resource {
 				Optional: true,
 				Default:  false,
 			},
+			"paused": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 			"alert_contact": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -196,11 +201,19 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
+	var status string
+	if d.Get("paused").(bool) {
+		status = "0"
+	} else {
+		status = "1"
+	}
+
 	req := uptimerobotapi.MonitorUpdateRequest{
 		ID:           id,
 		FriendlyName: d.Get("friendly_name").(string),
 		URL:          d.Get("url").(string),
 		Type:         d.Get("type").(string),
+		Status:       status,
 	}
 
 	switch req.Type {
@@ -274,6 +287,7 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) err
 	d.Set("url", m.URL)
 	d.Set("type", m.Type)
 	d.Set("status", m.Status)
+	d.Set("paused", m.Paused)
 	d.Set("interval", m.Interval)
 
 	d.Set("sub_type", m.SubType)

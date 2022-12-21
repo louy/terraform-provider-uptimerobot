@@ -60,6 +60,7 @@ type Monitor struct {
 	URL          string `json:"url"`
 	Type         string `json:"type"`
 	Status       string `json:"status"`
+	Paused       bool   `json:"paused"`
 	Interval     int    `json:"interval"`
 
 	SubType string `json:"sub_type"`
@@ -114,6 +115,13 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 	m.URL = monitor["url"].(string)
 	m.Type = intToString(monitorType, int(monitor["type"].(float64)))
 	m.Status = intToString(monitorStatus, int(monitor["status"].(float64)))
+
+	if m.Status == "paused" {
+		m.Paused = true
+	} else {
+		m.Paused = false
+	}
+
 	m.Interval = int(monitor["interval"].(float64))
 
 	switch m.Type {
@@ -270,6 +278,7 @@ type MonitorUpdateRequest struct {
 	FriendlyName string
 	URL          string
 	Type         string
+	Status       string
 	Interval     int
 
 	SubType string
@@ -295,6 +304,7 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 	data.Add("friendly_name", req.FriendlyName)
 	data.Add("url", req.URL)
 	data.Add("type", fmt.Sprintf("%d", monitorType[req.Type]))
+	data.Add("status", req.Status)
 	data.Add("interval", fmt.Sprintf("%d", req.Interval))
 	switch req.Type {
 	case "port":
