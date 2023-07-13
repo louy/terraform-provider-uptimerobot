@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	uptimerobotapi "github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
+	uptimerobotapi "github.com/realiotech/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 func resourceMonitor() *schema.Resource {

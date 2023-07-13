@@ -1,4 +1,4 @@
-module github.com/louy/terraform-provider-uptimerobot
+module github.com/realiotech/terraform-provider-uptimerobot
 
 go 1.12
 

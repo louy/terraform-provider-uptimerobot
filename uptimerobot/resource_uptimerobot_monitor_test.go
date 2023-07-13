@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	uptimerobotapi "github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
+	uptimerobotapi "github.com/realiotech/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 func TestUptimeRobotDataResourceMonitor_http_monitor(t *testing.T) {

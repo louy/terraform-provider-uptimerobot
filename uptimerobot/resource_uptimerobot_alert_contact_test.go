@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
+	"github.com/realiotech/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 func TestUptimeRobotDataResourceAlertContact_email(t *testing.T) {
