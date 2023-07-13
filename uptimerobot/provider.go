@@ -12,7 +12,7 @@ package uptimerobot
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/louy/terraform-provider-uptimerobot/uptimerobot/api"
+	"github.com/realiotech/terraform-provider-uptimerobot/uptimerobot/api"
 )
 
 // Provider returns a terraform.ResourceProvider.
