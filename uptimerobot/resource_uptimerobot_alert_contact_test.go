@@ -11,6 +11,8 @@ import (
 )
 
 func TestUptimeRobotDataResourceAlertContact_email(t *testing.T) {
+	t.Skip("Skipping tests as our account doesnt support this")
+
 	var email = "devops+tf@realio.fund"
 	var friendlyName = "TF Test: Email"
 	resource.Test(t, resource.TestCase{
@@ -42,6 +44,8 @@ func TestUptimeRobotDataResourceAlertContact_email(t *testing.T) {
 }
 
 func TestUptimeRobotDataResourceAlertContact_update_email(t *testing.T) {
+	t.Skip("Skipping tests as our account doesnt support this")
+
 	var email = "devops+tf@realio.fund"
 	var email2 = "devops+tf2@realio.fund"
 	var friendlyName = "TF Test: Email"
