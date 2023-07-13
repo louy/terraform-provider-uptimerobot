@@ -11,7 +11,7 @@ import (
 )
 
 func TestUptimeRobotDataResourceAlertContact_email(t *testing.T) {
-	var email = "louay+tftest@alakkad.me"
+	var email = "devops+tf@realio.fund"
 	var friendlyName = "TF Test: Email"
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -42,8 +42,8 @@ func TestUptimeRobotDataResourceAlertContact_email(t *testing.T) {
 }
 
 func TestUptimeRobotDataResourceAlertContact_update_email(t *testing.T) {
-	var email = "louay+tftest@alakkad.me"
-	var email2 = "louay+tftest2@alakkad.me"
+	var email = "devops+tf@realio.fund"
+	var email2 = "devops+tf2@realio.fund"
 	var friendlyName = "TF Test: Email"
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
