@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/plugin"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"github.com/louy/terraform-provider-uptimerobot/uptimerobot"
+	"github.com/realiotech/terraform-provider-uptimerobot/uptimerobot"
 )
 
 func main() {
